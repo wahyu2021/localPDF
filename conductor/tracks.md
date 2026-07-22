@@ -14,7 +14,7 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ---
 
-## [ ] Track: Fitur Merge PDF
+## [x] Track: Fitur Merge PDF
 - **Tautan:** [004-fitur-merge-pdf](tracks/004-fitur-merge-pdf/index.md)
 
 ---
