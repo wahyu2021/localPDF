@@ -9,5 +9,5 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ---
 
-## [~] Track: Setup Engine & Binary Manager
+## [x] Track: Setup Engine & Binary Manager
 - **Tautan:** [002-setup-engine-binary](tracks/002-setup-engine-binary/index.md)
