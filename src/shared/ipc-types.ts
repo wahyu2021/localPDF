@@ -28,3 +28,15 @@ export interface ProgressUpdateData {
   taskId: string;
   percent: number;
 }
+
+export interface MergePayload {
+  filePaths: string[];
+}
+
+export interface MergeResult {
+  success: boolean;
+  tempPath?: string;
+  totalOriginalSize?: number;
+  newSize?: number;
+  error?: string;
+}
