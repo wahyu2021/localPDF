@@ -1,0 +1,10 @@
+export const IPC_CHANNELS = {
+  COMPRESS_PDF: 'compress-pdf',
+  MERGE_PDF: 'merge-pdf',
+  SPLIT_PDF: 'split-pdf',
+  CONVERT_TO_PDF: 'convert-to-pdf',
+  PROTECT_PDF: 'protect-pdf',
+  UNLOCK_PDF: 'unlock-pdf',
+  PROGRESS_UPDATE: 'progress-update',
+  OPEN_OUTPUT_FOLDER: 'open-output-folder',
+} as const;
