@@ -31,7 +31,7 @@ export function registerMergeHandler(mainWindow: BrowserWindow) {
       log.info(`Mengeksekusi penggabungan ${payload.filePaths.length} file PDF menggunakan QPDF...`);
 
       // Panggil binary QPDF
-      const result = await runEngine('qpdf/bin/qpdf.exe', qpdfArgs);
+      const result = await runEngine('qpdf/qpdf.exe', qpdfArgs);
 
       if (!result.success || !fs.existsSync(tempOutputPath)) {
         throw new Error('Proses penggabungan QPDF gagal atau file tidak terbentuk.');
