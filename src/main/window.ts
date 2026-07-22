@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, app } from 'electron';
 import { join } from 'path';
 
 export function createMainWindow(): BrowserWindow {
@@ -19,6 +19,10 @@ export function createMainWindow(): BrowserWindow {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
+    // Buka DevTools secara otomatis (berguna saat ada error)
+    if (process.env.NODE_ENV === 'development' || !app.isPackaged) {
+      mainWindow.webContents.openDevTools();
+    }
   });
 
   // HMR dari electron-vite saat development

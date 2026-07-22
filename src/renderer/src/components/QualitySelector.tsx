@@ -28,16 +28,14 @@ export function QualitySelector() {
   ] as const;
 
   return (
-    <div className="w-full max-w-3xl mx-auto mt-6 bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm animate-in slide-in-from-bottom-4 duration-500">
-      <div className="p-5 sm:p-6 bg-slate-50 border-b border-slate-100 flex items-center gap-3">
-        <div className="p-2 bg-teal-100 text-teal-600 rounded-lg">
-          <Settings size={20} />
-        </div>
-        <h3 className="text-lg font-bold text-slate-800">Tingkat Kompresi</h3>
+    <div className="w-full max-w-3xl mx-auto mt-6 bg-white border border-slate-300 rounded-md overflow-hidden">
+      <div className="p-4 bg-slate-100 border-b border-slate-300 flex items-center gap-2">
+        <Settings size={18} className="text-slate-600" />
+        <h3 className="text-sm font-semibold text-slate-800">Tingkat Kompresi</h3>
       </div>
       
-      <div className="p-5 sm:p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="p-4 sm:p-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
           {presets.map((preset) => {
             const isSelected = quality === preset.id;
             const Icon = preset.icon;
@@ -46,20 +44,20 @@ export function QualitySelector() {
                 key={preset.id}
                 onClick={() => setQuality(preset.id)}
                 className={cn(
-                  'flex flex-col text-left p-4 rounded-2xl border-2 transition-all duration-200 relative',
+                  'flex flex-col text-left p-3 rounded-md border transition-colors relative',
                   isSelected 
-                    ? 'border-teal-500 bg-teal-50 shadow-sm ring-4 ring-teal-500/10'
-                    : 'border-slate-100 hover:border-teal-300 hover:bg-slate-50'
+                    ? 'border-teal-600 bg-teal-50'
+                    : 'border-slate-300 hover:border-slate-400 hover:bg-slate-50'
                 )}
               >
-                <div className={cn("mb-3 transition-colors", isSelected ? "text-teal-600" : "text-slate-400")}>
-                  <Icon size={24} />
+                <div className={cn("mb-2", isSelected ? "text-teal-600" : "text-slate-500")}>
+                  <Icon size={20} />
                 </div>
-                <h4 className="font-semibold text-slate-800 mb-1">{preset.title}</h4>
-                <p className="text-xs text-slate-500 leading-relaxed">{preset.desc}</p>
+                <h4 className="font-semibold text-sm text-slate-800 mb-1">{preset.title}</h4>
+                <p className="text-xs text-slate-600">{preset.desc}</p>
                 {isSelected && (
-                  <div className="absolute top-4 right-4 text-teal-500 animate-in zoom-in">
-                    <CheckCircle2 size={18} className="fill-teal-100" />
+                  <div className="absolute top-3 right-3 text-teal-600">
+                    <CheckCircle2 size={16} />
                   </div>
                 )}
               </button>

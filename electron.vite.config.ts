@@ -8,8 +8,15 @@ export default defineConfig({
     build: {
       outDir: 'dist/main',
       rollupOptions: {
+        external: ['electron', 'path', 'fs', 'child_process', 'crypto', 'os', 'execa', 'electron-log'],
         input: {
           index: resolve(__dirname, 'src/main/index.ts')
+        },
+        output: {
+          format: 'cjs',
+          entryFileNames: '[name].js',
+          chunkFileNames: '[name].js',
+          assetFileNames: '[name].[ext]'
         }
       }
     }
@@ -19,8 +26,15 @@ export default defineConfig({
     build: {
       outDir: 'dist/preload',
       rollupOptions: {
+        external: ['electron', 'path', 'fs', 'child_process', 'crypto', 'os', 'execa', 'electron-log'],
         input: {
           index: resolve(__dirname, 'src/preload/index.ts')
+        },
+        output: {
+          format: 'cjs',
+          entryFileNames: '[name].js',
+          chunkFileNames: '[name].js',
+          assetFileNames: '[name].[ext]'
         }
       }
     }

@@ -4,13 +4,25 @@ import { ThumbnailPreview } from '../components/ThumbnailPreview';
 import { QualitySelector } from '../components/QualitySelector';
 import { useCompressStore } from '../store/compressStore';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Save, RotateCcw, ArrowRight } from 'lucide-react';
+
+function formatBytes(bytes: number, decimals = 2) {
+  if (!+bytes) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
 
 export function CompressPage() {
-  const { file, setFile, quality, customDpi, isProcessing, setIsProcessing, reset } = useCompressStore();
+  const { file, filePath, setFile, quality, customDpi, isProcessing, setIsProcessing, compressedResult, setCompressedResult, reset } = useCompressStore();
 
   const handleCompress = async () => {
-    if (!file) return;
+    if (!file || !filePath) {
+      toast.error('File belum siap atau gagal dibaca.');
+      return;
+    }
 
     setIsProcessing(true);
     const loadingToast = toast.loading('Sedang mengompresi PDF...', {
@@ -18,12 +30,8 @@ export function CompressPage() {
     });
 
     try {
-      // Di Electron, objek File hasil input web memiliki atribut tersembunyi "path" (absolute path)
-      const filePath = (file as any).path;
-
-      // Panggil IPC bridge ke Main Process
       const result = await window.api.compressPdf({
-        filePath,
+        filePath: filePath,
         level: quality,
         customDpi: quality === 'custom' ? customDpi : undefined,
       });
@@ -31,20 +39,13 @@ export function CompressPage() {
       toast.dismiss(loadingToast);
 
       if (result.success) {
-        // Kalkulasi penghematan jika ada
-        const savedSpace = result.originalSize && result.newSize 
-          ? ((result.originalSize - result.newSize) / result.originalSize * 100).toFixed(1)
-          : null;
-          
         toast.success('Kompresi Selesai!', {
-          description: savedSpace 
-            ? `Berhasil menghemat ukuran sebesar ${savedSpace}%.`
-            : 'File berhasil dikompresi dan disimpan.',
-          duration: 5000,
+          description: 'Cek perbandingan ukurannya sebelum menyimpan.',
+          duration: 3000,
         });
-        reset(); // Kembalikan UI ke awal
+        setCompressedResult(result);
       } else {
-        toast.error('Kompresi Dibatalkan / Gagal', {
+        toast.error('Kompresi Gagal', {
           description: result.error || 'Terjadi kesalahan tidak diketahui.'
         });
       }
@@ -58,56 +59,124 @@ export function CompressPage() {
     }
   };
 
-  return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)] p-8">
-      <div className="max-w-4xl mx-auto w-full space-y-10">
-        
-        {/* Header Section */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">
-            Compress PDF
-          </h1>
-          <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
-            Kurangi ukuran file PDF Anda secara drastis tanpa kehilangan kualitas visual yang signifikan. Cepat, privat, dan offline.
-          </p>
-        </div>
+  const handleSave = async () => {
+    if (!compressedResult || !compressedResult.tempPath || !file) return;
 
-        {/* Main Workspace Area */}
-        <div className="space-y-6">
-          {!file ? (
-            <DragDropZone onFileSelect={setFile} className="mt-8" />
-          ) : (
-            <div className="space-y-6">
-              <ThumbnailPreview file={file} onClear={() => setFile(null)} />
-              
-              {/* Form Kualitas */}
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150 fill-mode-both">
-                <QualitySelector />
+    try {
+      const saveResult = await window.api.savePdf({
+        tempPath: compressedResult.tempPath,
+        defaultFileName: `${file.name.replace(/\.pdf$/i, '')}_compressed.pdf`
+      });
+
+      if (saveResult.success) {
+        toast.success('File Tersimpan!', {
+          description: `Disimpan di: ${saveResult.savedPath}`
+        });
+        reset();
+      } else if (!saveResult.canceled) {
+        toast.error('Gagal Menyimpan', { description: saveResult.error });
+      }
+    } catch (error: any) {
+      toast.error('Gagal Menyimpan', { description: error.message });
+    }
+  };
+
+  const handleCancel = () => {
+    // Membatalkan hasil dan mengulang dari state file yang sama
+    setCompressedResult(null);
+  };
+
+  // Kalkulasi persentase hemat
+  const savedPercentage = compressedResult?.originalSize && compressedResult?.newSize
+    ? ((compressedResult.originalSize - compressedResult.newSize) / compressedResult.originalSize * 100).toFixed(1)
+    : 0;
+
+  return (
+    <div className="w-full max-w-3xl mx-auto">
+      <div className="space-y-6">
+        {!file ? (
+          <div className="pt-8">
+            <DragDropZone onFileSelect={setFile} />
+          </div>
+        ) : !compressedResult ? (
+          <div className="space-y-5">
+            <ThumbnailPreview file={file} onClear={reset} />
+            
+            {/* Form Kualitas */}
+            <div className="pt-2">
+              <QualitySelector />
+            </div>
+            
+            {/* Tombol Eksekusi */}
+            <div className="flex justify-end pt-4">
+              <button
+                onClick={handleCompress}
+                disabled={isProcessing}
+                className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-teal-700 border border-teal-800 rounded hover:bg-teal-800 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Memproses...
+                  </>
+                ) : (
+                  'Kompres PDF Sekarang'
+                )}
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Tampilan Berhasil & Perbandingan Ukuran */
+          <div className="space-y-6 mt-4">
+            <div className="bg-white border border-slate-300 rounded-md overflow-hidden">
+              <div className="p-4 bg-slate-100 border-b border-slate-300">
+                <h3 className="text-sm font-semibold text-slate-800">Hasil Kompresi</h3>
               </div>
               
-              {/* Tombol Eksekusi */}
-              <div className="flex justify-center pt-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300 fill-mode-both">
-                <button
-                  onClick={handleCompress}
-                  disabled={isProcessing}
-                  className="relative flex items-center justify-center gap-3 px-12 py-4 text-lg font-bold text-white transition-all bg-teal-600 rounded-full shadow-xl shadow-teal-500/20 hover:bg-teal-500 hover:scale-105 active:scale-95 disabled:opacity-70 disabled:pointer-events-none disabled:scale-100 group"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 size={24} className="animate-spin" />
-                      Memproses File...
-                    </>
-                  ) : (
-                    <>
-                      Kompres PDF Sekarang
-                      <div className="absolute inset-0 rounded-full shadow-[0_0_20px_rgba(20,184,166,0.4)] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </>
-                  )}
-                </button>
+              <div className="p-6">
+                <table className="w-full text-left border-collapse">
+                  <tbody>
+                    <tr className="border-b border-slate-200">
+                      <th className="py-3 px-4 bg-slate-50 text-sm font-medium text-slate-600 w-1/3">Ukuran Awal</th>
+                      <td className="py-3 px-4 text-sm text-slate-800">
+                        {compressedResult.originalSize ? formatBytes(compressedResult.originalSize) : '?'}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-slate-200">
+                      <th className="py-3 px-4 bg-slate-50 text-sm font-medium text-slate-600">Ukuran Baru</th>
+                      <td className="py-3 px-4 text-sm font-bold text-teal-700">
+                        {compressedResult.newSize ? formatBytes(compressedResult.newSize) : '?'}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="py-3 px-4 bg-slate-50 text-sm font-medium text-slate-600">Penghematan</th>
+                      <td className="py-3 px-4 text-sm text-slate-800">
+                        {savedPercentage}%
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-          )}
-        </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                onClick={handleCancel}
+                className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-50 flex items-center gap-2"
+              >
+                Batal / Ulangi
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-teal-700 border border-teal-800 rounded hover:bg-teal-800 flex items-center gap-2"
+              >
+                <Save size={16} />
+                Simpan File Kompresi
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -21,26 +21,26 @@ export function ThumbnailPreview({ file, onClear, className }: ThumbnailPreviewP
 
   return (
     <div className={cn(
-      'relative flex items-center max-w-3xl mx-auto p-4 bg-white border border-slate-200 rounded-2xl shadow-sm animate-in fade-in zoom-in-95 duration-300', 
+      'relative flex items-center max-w-3xl mx-auto p-3 bg-white border border-slate-300 rounded-md', 
       className
     )}>
-      <div className="flex items-center justify-center w-16 h-16 mr-4 rounded-xl bg-teal-50 text-teal-600">
-        <FileText size={32} />
+      <div className="flex items-center justify-center w-12 h-12 mr-3 rounded-md bg-teal-50 text-teal-700 border border-teal-100">
+        <FileText size={24} />
       </div>
       <div className="flex-1 overflow-hidden">
-        <h4 className="text-lg font-bold text-slate-800 truncate" title={file.name}>
+        <h4 className="text-sm font-semibold text-slate-800 truncate" title={file.name}>
           {file.name}
         </h4>
-        <p className="text-sm font-medium text-slate-500">
+        <p className="text-xs text-slate-500 mt-0.5">
           Ukuran asli: {formatBytes(file.size)}
         </p>
       </div>
       <button
         onClick={onClear}
-        className="p-3 ml-4 text-slate-400 transition-colors rounded-xl hover:bg-rose-50 hover:text-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/20"
+        className="p-2 ml-3 text-slate-500 transition-colors rounded hover:bg-slate-100 hover:text-slate-800 focus:outline-none"
         title="Batalkan pilihan file"
       >
-        <X size={20} />
+        <X size={18} />
       </button>
     </div>
   );
