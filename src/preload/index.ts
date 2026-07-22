@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import { IPC_CHANNELS } from '../shared/ipc-channels';
-import type { CompressPayload, CompressResult, ProgressUpdateData } from '../shared/ipc-types';
+import type { CompressPayload, CompressResult, MergePayload, MergeResult, ProgressUpdateData } from '../shared/ipc-types';
 
 const api = {
   getFilePath: (file: File) => {
@@ -13,6 +13,9 @@ const api = {
   
   compressPdf: (payload: CompressPayload): Promise<CompressResult> => 
     ipcRenderer.invoke(IPC_CHANNELS.COMPRESS_PDF, payload),
+
+  mergePdf: (payload: MergePayload): Promise<MergeResult> =>
+    ipcRenderer.invoke(IPC_CHANNELS.MERGE_PDF, payload),
     
   savePdf: (payload: { tempPath: string; defaultFileName: string }): Promise<any> =>
     ipcRenderer.invoke(IPC_CHANNELS.SAVE_PDF, payload),
