@@ -4,23 +4,44 @@
   "description": "Pengganti iLovePDF Premium — semua proses PDF dilakukan lokal, tanpa internet.",
   "main": "dist/main/index.js",
   "scripts": {
-    "compile": "tsc",
-    "compile:watch": "tsc --watch",
-    "start": "npm run compile && electron .",
-    "dev": "concurrently \"tsc --watch\" \"electron . --dev\"",
-    "build": "npm run compile && electron-builder",
-    "build:win": "npm run compile && electron-builder --win"
+    "start": "electron-vite preview",
+    "dev": "electron-vite dev",
+    "build": "electron-vite build && electron-builder",
+    "build:win": "electron-vite build && electron-builder --win"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.1.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "autoprefixer": "^10.5.4",
     "concurrently": "^10.0.3",
     "electron": "^43.2.0",
     "electron-builder": "^26.15.3",
     "electron-devtools-installer": "^4.0.0",
-    "typescript": "^7.0.2"
+    "electron-vite": "^5.0.0",
+    "postcss": "^8.5.21",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5"
+  },
+  "dependencies": {
+    "archiver": "^8.0.0",
+    "clsx": "^2.1.1",
+    "electron-log": "^5.4.4",
+    "execa": "^10.0.0",
+    "lucide-react": "^1.25.0",
+    "nanoid": "^6.0.0",
+    "pdfjs-dist": "^6.1.200",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-dropzone": "^19.1.1",
+    "tailwind-merge": "^3.6.0",
+    "zustand": "^5.0.14"
   }
 }
