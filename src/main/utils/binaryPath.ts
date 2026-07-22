@@ -5,7 +5,7 @@ import { app } from 'electron';
  * Mendapatkan absolute path dari folder binaries yang dibundel.
  * Menangani perbedaan letak file antara saat mode *development* dengan saat di-*build*.
  * 
- * @param binaryName - Nama eksekusi (contoh: 'qpdf.exe' atau 'gswin64c.exe').
+ * @param binaryName - Nama eksekusi (contoh: 'qpdf/qpdf.exe' atau 'gs/gswin64c.exe').
  * @returns Absolute path ke file binary yang dituju.
  */
 export function getBinaryPath(binaryName: string): string {
@@ -17,5 +17,6 @@ export function getBinaryPath(binaryName: string): string {
   // Karena saat ini fokus rilis untuk Windows
   const platformFolder = 'win';
   
+  // binaryName di sini bisa berupa path bersarang, misal "qpdf/qpdf.exe"
   return path.join(rootDir, 'binaries', platformFolder, binaryName);
 }
