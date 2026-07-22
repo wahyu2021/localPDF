@@ -29,11 +29,7 @@ Desktop.ini
 .env.production
 
 # Binary engine (terlalu besar untuk Git — download/copy manual)
-binaries/win/gswin64c.exe
-binaries/win/gsdll64.dll
-binaries/win/qpdf.exe
-binaries/win/qpdf*.dll
-binaries/win/libreoffice-portable/
+binaries/
 
 # Logs
 *.log
