@@ -1,0 +1,8 @@
+{
+  "track_id": "003-fitur-compress-pdf",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-22T15:38:00Z",
+  "updated_at": "2026-07-22T15:38:00Z",
+  "description": "Fitur Compress PDF menggunakan Ghostscript dengan UI interaktif"
+}
