@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# TypeScript build output
+dist/
+
+# Electron builder output
+build/
+out/
+
+# Temp files (auto-generated saat runtime)
+temp/uploads/
+temp/output/
+
+# OS files
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Binary engine (terlalu besar untuk Git — download/copy manual)
+binaries/win/gswin64c.exe
+binaries/win/gsdll64.dll
+binaries/win/qpdf.exe
+binaries/win/qpdf*.dll
+binaries/win/libreoffice-portable/
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,26 @@
+{
+  "name": "localpdf",
+  "version": "1.0.0",
+  "description": "Pengganti iLovePDF Premium — semua proses PDF dilakukan lokal, tanpa internet.",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "compile": "tsc",
+    "compile:watch": "tsc --watch",
+    "start": "npm run compile && electron .",
+    "dev": "concurrently \"tsc --watch\" \"electron . --dev\"",
+    "build": "npm run compile && electron-builder",
+    "build:win": "npm run compile && electron-builder --win"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "concurrently": "^10.0.3",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
+    "electron-devtools-installer": "^4.0.0",
+    "typescript": "^7.0.2"
+  }
+}
