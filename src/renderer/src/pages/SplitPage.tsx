@@ -261,36 +261,39 @@ export function SplitPage() {
             )}
           </div>
         ) : (
-                  <tr className="border-b border-slate-200">
-                    <th className="py-3 px-4 bg-slate-50 text-sm font-medium text-slate-600">Mode Pemecahan</th>
-                    <td className="py-3 px-4 text-sm text-slate-800">
-                      {mode === 'extract' ? 'Ekstrak Halaman' : 'Pecah Semua Halaman'}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="py-3 px-4 bg-slate-50 text-sm font-medium text-slate-600">Total File Dihasilkan</th>
-                    <td className="py-3 px-4 text-sm font-bold text-teal-700">
-                      {result.filesGenerated} File
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          /* Tampilan Berhasil */
+          <div className="animate-in zoom-in-95 duration-500 max-w-2xl mx-auto mt-12">
+            <div className="bg-white border border-slate-200 rounded-2xl p-10 shadow-sm text-center">
+              <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FileArchive size={40} />
+              </div>
+              <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Pemecahan Selesai!</h2>
+              <p className="text-slate-500 mb-10 text-lg">
+                Proses {mode === 'extract' ? 'ekstraksi' : 'pemecahan'} PDF berhasil menghasilkan <span className="font-extrabold text-emerald-600">{result.filesGenerated}</span> file.
+              </p>
+              
+              <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 text-left mb-10">
+                <p className="text-xs font-bold text-slate-400 mb-1 uppercase tracking-widest">Lokasi File Disimpan</p>
+                <p className="text-sm font-medium text-slate-700 break-all select-all font-mono bg-white p-3 border border-slate-200 rounded mt-2">
+                  {result.outputDirectory}
+                </p>
+              </div>
 
-            <div className="p-4 border-t border-slate-300 bg-slate-50 flex justify-end gap-3">
-              <button
-                onClick={reset}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-50 flex items-center gap-2 transition-colors"
-              >
-                Batal / Ulangi
-              </button>
-              <button
-                onClick={handleOpenFolder}
-                className="px-5 py-2.5 text-sm font-semibold text-white bg-teal-700 border border-teal-800 rounded hover:bg-teal-800 flex items-center gap-2 transition-colors shadow-sm"
-              >
-                <FolderOpen size={16} />
-                Buka Folder Tujuan
-              </button>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={reset}
+                  className="px-8 py-3.5 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+                >
+                  Proses File Lain
+                </button>
+                <button
+                  onClick={handleOpenFolder}
+                  className="px-8 py-3.5 text-sm font-bold text-white bg-teal-600 border border-teal-700 rounded-xl hover:bg-teal-700 flex items-center gap-2 transition-colors shadow-sm"
+                >
+                  <FolderOpen size={18} />
+                  Buka Folder Hasil
+                </button>
+              </div>
             </div>
           </div>
         )}
