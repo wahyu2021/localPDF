@@ -9,6 +9,7 @@ interface CompressState {
   quality: CompressionLevel;
   customDpi: number;
   isProcessing: boolean;
+  progress: number;
   compressedResult: CompressResult | null;
   
   // Actions
@@ -16,6 +17,7 @@ interface CompressState {
   setQuality: (quality: CompressionLevel) => void;
   setCustomDpi: (dpi: number) => void;
   setIsProcessing: (status: boolean) => void;
+  setProgress: (progress: number) => void;
   setCompressedResult: (result: CompressResult | null) => void;
   reset: () => void;
 }
@@ -26,12 +28,14 @@ export const useCompressStore = create<CompressState>((set) => ({
   quality: 'screen', // Mode default (Extreme Compression)
   customDpi: 72,
   isProcessing: false,
+  progress: 0,
   compressedResult: null,
   
   setFile: (file, path) => set({ file, filePath: path || null }),
   setQuality: (quality) => set({ quality }),
   setCustomDpi: (customDpi) => set({ customDpi }),
   setIsProcessing: (isProcessing) => set({ isProcessing }),
+  setProgress: (progress) => set({ progress }),
   setCompressedResult: (result) => set({ compressedResult: result }),
-  reset: () => set({ file: null, filePath: null, quality: 'screen', customDpi: 72, isProcessing: false, compressedResult: null }),
+  reset: () => set({ file: null, filePath: null, quality: 'screen', customDpi: 72, isProcessing: false, progress: 0, compressedResult: null }),
 }));

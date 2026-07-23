@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { FileText, X, UploadCloud, GripVertical, Save, Loader2, Layers } from 'lucide-react';
+import { FileText, X, UploadCloud, GripVertical, Save, Loader2, Layers, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { DragDropZone } from '../../components/shared/DragDropZone';
@@ -20,11 +20,42 @@ export function MergePage() {
     reorderFiles,
     clearFiles,
     setIsProcessing,
-    setMergeResult
+    setMergeResult,
+    progress,
+    setProgress
   } = useMergeStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<string>('');
+
+  useEffect(() => {
+    if (!window.api) return;
+    const unsubscribe = window.api.onProgressUpdate((data: any) => {
+      setProgress(data.percent);
+      
+      if (startTime && data.percent > 10 && data.percent < 100) {
+        const elapsed = Date.now() - startTime;
+        const totalEstimated = elapsed / (data.percent / 100);
+        const remainingMs = totalEstimated - elapsed;
+        
+        if (remainingMs > 0) {
+          const remainingSec = Math.ceil(remainingMs / 1000);
+          if (remainingSec > 60) {
+            setTimeRemaining(`~${Math.floor(remainingSec / 60)} mnt ${remainingSec % 60} dtk`);
+          } else {
+            setTimeRemaining(`~${remainingSec} detik lagi`);
+          }
+        }
+      } else if (data.percent > 0 && data.percent <= 10) {
+        setTimeRemaining('Sedang memproses data...');
+      } else if (data.percent === 100) {
+        setTimeRemaining('Selesai!');
+      }
+    });
+    return () => unsubscribe();
+  }, [startTime, setProgress]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -84,8 +115,11 @@ export function MergePage() {
 
     try {
       setIsProcessing(true);
-      const filePaths = files.map(f => f.path);
+      setStartTime(Date.now());
+      setProgress(0);
+      setTimeRemaining('Menghitung estimasi...');
       
+      const filePaths = files.map(f => f.path);
       const result = await window.api.mergePdf({ filePaths });
       
       if (result.success) {
@@ -98,6 +132,7 @@ export function MergePage() {
       toast.error(error.message || 'Terjadi kesalahan sistem.');
     } finally {
       setIsProcessing(false);
+      setStartTime(null);
     }
   };
 
@@ -178,29 +213,51 @@ export function MergePage() {
                 </CardContent>
               </Card>
 
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={clearFiles}
-                  disabled={isProcessing || files.length === 0}
-                  className="flex-1 py-6 text-slate-600 shadow-sm"
-                >
-                  Bersihkan
-                </Button>
-                <Button
-                  onClick={handleMerge}
-                  disabled={isProcessing || files.length < 2}
-                  className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin mr-2" />
-                      Menggabungkan...
-                    </>
-                  ) : (
-                    'Gabungkan PDF'
-                  )}
-                </Button>
+              <div className="flex flex-col gap-3">
+                {isProcessing && (
+                  <div className="space-y-2 mb-2 p-4 bg-slate-50 border border-slate-100 rounded-lg">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="font-medium text-slate-700">Progres Penggabungan</span>
+                      <span className="font-bold text-teal-600">{progress}%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                      <div 
+                        className="bg-teal-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                    <div className="text-xs text-slate-500 text-right mt-1 font-medium">
+                      {timeRemaining}
+                    </div>
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={clearFiles}
+                    disabled={isProcessing || files.length === 0}
+                    className="flex-1 py-6 text-slate-600 shadow-sm"
+                  >
+                    Bersihkan
+                  </Button>
+                  <Button
+                    onClick={handleMerge}
+                    disabled={isProcessing || files.length < 2}
+                    className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin mr-2" />
+                        Menggabungkan...
+                      </>
+                    ) : (
+                      <>
+                        Gabungkan PDF
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
 

@@ -10,18 +10,22 @@ export interface MergeFile {
 interface MergeStore {
   files: MergeFile[];
   isProcessing: boolean;
+  progress: number;
   mergeResult: MergeResult | null;
   addFiles: (newFiles: MergeFile[]) => void;
   removeFile: (id: string) => void;
   reorderFiles: (startIndex: number, endIndex: number) => void;
   clearFiles: () => void;
   setIsProcessing: (status: boolean) => void;
+  setProgress: (progress: number) => void;
   setMergeResult: (result: MergeResult | null) => void;
+  reset: () => void;
 }
 
 export const useMergeStore = create<MergeStore>((set) => ({
   files: [],
   isProcessing: false,
+  progress: 0,
   mergeResult: null,
 
   addFiles: (newFiles) => set((state) => {
@@ -43,6 +47,8 @@ export const useMergeStore = create<MergeStore>((set) => ({
   }),
   
   clearFiles: () => set({ files: [], mergeResult: null }),
-  setIsProcessing: (status) => set({ isProcessing: status }),
+  setIsProcessing: (isProcessing) => set({ isProcessing }),
+  setProgress: (progress) => set({ progress }),
   setMergeResult: (result) => set({ mergeResult: result }),
+  reset: () => set({ files: [], isProcessing: false, progress: 0, mergeResult: null }),
 }));

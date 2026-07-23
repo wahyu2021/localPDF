@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { DragDropZone } from '../../components/shared/DragDropZone';
 import { ThumbnailPreview } from '../../components/shared/ThumbnailPreview';
 import { PDFCanvasPreview } from '../../components/shared/PDFCanvasPreview';
@@ -20,8 +20,37 @@ function formatBytes(bytes: number, decimals = 2) {
 }
 
 export function CompressPage() {
-  const { file, filePath, setFile, quality, customDpi, isProcessing, setIsProcessing, compressedResult, setCompressedResult, reset } = useCompressStore();
+  const { file, filePath, setFile, quality, customDpi, isProcessing, setIsProcessing, compressedResult, setCompressedResult, reset, progress, setProgress } = useCompressStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<string>('');
+
+  useEffect(() => {
+    if (!window.api) return;
+    const unsubscribe = window.api.onProgressUpdate((data) => {
+      setProgress(data.percent);
+      
+      if (startTime && data.percent > 10 && data.percent < 100) {
+        const elapsed = Date.now() - startTime;
+        const totalEstimated = elapsed / (data.percent / 100);
+        const remainingMs = totalEstimated - elapsed;
+        
+        if (remainingMs > 0) {
+          const remainingSec = Math.ceil(remainingMs / 1000);
+          if (remainingSec > 60) {
+            setTimeRemaining(`~${Math.floor(remainingSec / 60)} mnt ${remainingSec % 60} dtk`);
+          } else {
+            setTimeRemaining(`~${remainingSec} detik lagi`);
+          }
+        }
+      } else if (data.percent > 0 && data.percent <= 10) {
+        setTimeRemaining('Sedang memproses data...');
+      } else if (data.percent === 100) {
+        setTimeRemaining('Selesai!');
+      }
+    });
+    return () => unsubscribe();
+  }, [startTime, setProgress]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -42,6 +71,9 @@ export function CompressPage() {
     }
 
     setIsProcessing(true);
+    setStartTime(Date.now());
+    setProgress(0);
+    setTimeRemaining('Menghitung estimasi...');
     const loadingToast = toast.loading('Sedang mengompresi PDF...', {
       description: 'Mohon tunggu, proses ini mungkin memakan waktu.'
     });
@@ -73,6 +105,7 @@ export function CompressPage() {
       });
     } finally {
       setIsProcessing(false);
+      setStartTime(null);
     }
   };
 
@@ -158,29 +191,48 @@ export function CompressPage() {
                 </CardContent>
               </Card>
               
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={reset}
-                  disabled={isProcessing}
-                  className="flex-1 py-6"
-                >
-                  Batal
-                </Button>
-                <Button
-                  onClick={handleCompress}
-                  disabled={isProcessing}
-                  className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin mr-2" />
-                      Memproses...
-                    </>
-                  ) : (
-                    'Kompres Sekarang'
-                  )}
-                </Button>
+              <div className="flex flex-col gap-3">
+                {isProcessing && (
+                  <div className="space-y-2 mb-2 p-4 bg-slate-50 border border-slate-100 rounded-lg">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="font-medium text-slate-700">Progres Kompresi</span>
+                      <span className="font-bold text-teal-600">{progress}%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                      <div 
+                        className="bg-teal-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                    <div className="text-xs text-slate-500 text-right mt-1 font-medium">
+                      {timeRemaining}
+                    </div>
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={reset}
+                    disabled={isProcessing}
+                    className="flex-1 py-6"
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    onClick={handleCompress}
+                    disabled={isProcessing}
+                    className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin mr-2" />
+                        Memproses...
+                      </>
+                    ) : (
+                      'Kompres Sekarang'
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

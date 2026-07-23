@@ -5,6 +5,7 @@ import { IPC_CHANNELS } from '../../shared/ipc-channels';
 import { SplitPayload, SplitResult } from '../../shared/ipc-types';
 import { runEngine } from '../engines/engineRunner';
 import log from 'electron-log';
+import { sendProgress } from '../utils/progress';
 
 export function registerSplitHandler(mainWindow: BrowserWindow) {
   // Handler untuk memilih folder
@@ -24,6 +25,10 @@ export function registerSplitHandler(mainWindow: BrowserWindow) {
   // Handler untuk mengeksekusi split (QPDF)
   ipcMain.handle(IPC_CHANNELS.SPLIT_PDF, async (event, payload: SplitPayload): Promise<SplitResult> => {
     try {
+      const taskId = 'split_' + Date.now();
+      const window = BrowserWindow.fromWebContents(event.sender);
+      sendProgress(window, taskId, 10);
+      
       if (!payload.filePath || !fs.existsSync(payload.filePath)) {
         throw new Error('File PDF tidak ditemukan.');
       }
@@ -66,6 +71,8 @@ export function registerSplitHandler(mainWindow: BrowserWindow) {
       }
 
       const result = await runEngine('qpdf/qpdf.exe', qpdfArgs);
+      
+      sendProgress(window, taskId, 100);
 
       if (!result.success) {
         throw new Error('Proses pemecahan QPDF gagal.');

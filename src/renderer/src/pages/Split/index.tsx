@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useSplitStore } from '../../store/splitStore';
-import { FileArchive, FolderOpen, Loader2, UploadCloud } from 'lucide-react';
+import { FileArchive, FolderOpen, Loader2, UploadCloud, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
@@ -19,11 +19,13 @@ export function SplitPage() {
     pagesInput,
     isProcessing,
     result,
+    progress,
     setFile,
     setMode,
     setPagesInput,
     setIsProcessing,
     setResult,
+    setProgress,
     reset,
   } = useSplitStore();
 
@@ -31,6 +33,35 @@ export function SplitPage() {
   const pageInputRef = useRef<HTMLInputElement>(null);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [pageError, setPageError] = useState<string>('');
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<string>('');
+
+  useEffect(() => {
+    if (!window.api) return;
+    const unsubscribe = window.api.onProgressUpdate((data: { percent: number }) => {
+      setProgress(data.percent);
+      
+      if (startTime && data.percent > 10 && data.percent < 100) {
+        const elapsed = Date.now() - startTime;
+        const totalEstimated = elapsed / (data.percent / 100);
+        const remainingMs = totalEstimated - elapsed;
+        
+        if (remainingMs > 0) {
+          const remainingSec = Math.ceil(remainingMs / 1000);
+          if (remainingSec > 60) {
+            setTimeRemaining(`~${Math.floor(remainingSec / 60)} mnt ${remainingSec % 60} dtk`);
+          } else {
+            setTimeRemaining(`~${remainingSec} detik lagi`);
+          }
+        }
+      } else if (data.percent > 0 && data.percent <= 10) {
+        setTimeRemaining('Sedang memproses data...');
+      } else if (data.percent === 100) {
+        setTimeRemaining('Selesai!');
+      }
+    });
+    return () => unsubscribe();
+  }, [startTime, setProgress]);
 
   useEffect(() => {
     if (mode === 'extract' && file && !result && pageInputRef.current) {
@@ -100,6 +131,10 @@ export function SplitPage() {
       if (!outputDirectory) return;
       
       setIsProcessing(true);
+      setStartTime(Date.now());
+      setProgress(0);
+      setTimeRemaining('Menghitung estimasi...');
+      
       const filePath = window.api.getFilePath(file);
       
       const payload = {
@@ -121,6 +156,7 @@ export function SplitPage() {
       toast.error(err.message || 'Error tidak diketahui saat memproses PDF.');
     } finally {
       setIsProcessing(false);
+      setStartTime(null);
     }
   };
 
@@ -240,29 +276,52 @@ export function SplitPage() {
                   </CardContent>
                 </Card>
 
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={handleRemoveFile}
-                    disabled={isProcessing}
-                    className="flex-1 py-6 shadow-sm text-slate-600"
-                  >
-                    Batal
-                  </Button>
-                  <Button
-                    onClick={handleProcess}
-                    disabled={isProcessing}
-                    className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 size={18} className="animate-spin mr-2" />
-                        Memproses...
-                      </>
-                    ) : (
-                      'Pisahkan Sekarang'
-                    )}
-                  </Button>
+                <div className="flex flex-col gap-3">
+                  {isProcessing && (
+                    <div className="space-y-2 mb-2 p-4 bg-slate-50 border border-slate-100 rounded-lg">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="font-medium text-slate-700">Progres Pemisahan</span>
+                        <span className="font-bold text-teal-600">{progress}%</span>
+                      </div>
+                      <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                        <div 
+                          className="bg-teal-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-xs text-slate-500 text-right mt-1 font-medium">
+                        {timeRemaining}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={handleRemoveFile}
+                      disabled={isProcessing}
+                      className="flex-1 py-6 shadow-sm text-slate-600"
+                    >
+                      Batal
+                    </Button>
+                    <Button
+                      onClick={handleProcess}
+                      disabled={isProcessing || (mode === 'extract' && !pagesInput.trim())}
+                      className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 size={18} className="animate-spin mr-2" />
+                          Memproses...
+                        </>
+                      ) : (
+                        <>
+                          Pisahkan Sekarang
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

@@ -7,6 +7,7 @@ interface SplitState {
   mode: SplitMode;
   pagesInput: string;
   isProcessing: boolean;
+  progress: number;
   result: {
     success: boolean;
     outputDirectory?: string;
@@ -17,6 +18,7 @@ interface SplitState {
   setMode: (mode: SplitMode) => void;
   setPagesInput: (pages: string) => void;
   setIsProcessing: (isProcessing: boolean) => void;
+  setProgress: (progress: number) => void;
   setResult: (result: SplitState['result']) => void;
   reset: () => void;
 }
@@ -26,11 +28,13 @@ export const useSplitStore = create<SplitState>((set) => ({
   mode: 'extract',
   pagesInput: '',
   isProcessing: false,
+  progress: 0,
   result: null,
   setFile: (file) => set({ file }),
   setMode: (mode) => set({ mode }),
   setPagesInput: (pagesInput) => set({ pagesInput }),
   setIsProcessing: (isProcessing) => set({ isProcessing }),
+  setProgress: (progress) => set({ progress }),
   setResult: (result) => set({ result }),
-  reset: () => set({ file: null, mode: 'extract', pagesInput: '', isProcessing: false, result: null }),
+  reset: () => set({ file: null, mode: 'extract', pagesInput: '', isProcessing: false, progress: 0, result: null }),
 }));

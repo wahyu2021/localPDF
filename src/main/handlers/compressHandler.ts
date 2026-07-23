@@ -5,6 +5,8 @@ import { IPC_CHANNELS } from '../../shared/ipc-channels';
 import { CompressPayload, CompressResult, SavePayload, SaveResult } from '../../shared/ipc-types';
 import { runEngine } from '../engines/engineRunner';
 import { generateTaskId, getOutputPath } from '../utils/tempFileManager';
+import { sendProgress } from '../utils/progress';
+import { PDFDocument } from 'pdf-lib';
 import log from 'electron-log';
 
 /**
@@ -18,6 +20,9 @@ export function registerCompressHandler(mainWindow: BrowserWindow) {
       const originalFileName = path.basename(payload.filePath);
       const outputFileName = `${path.parse(originalFileName).name}_compressed.pdf`;
       const tempOutputPath = getOutputPath(outputFileName, taskId);
+      const window = BrowserWindow.fromWebContents(event.sender);
+      
+      sendProgress(window, taskId, 5);
 
       let qualityFlag = '/screen'; 
       if (payload.level === 'ebook') qualityFlag = '/ebook'; 
@@ -48,7 +53,32 @@ export function registerCompressHandler(mainWindow: BrowserWindow) {
 
       log.info(`Mengeksekusi kompresi untuk ${originalFileName} dengan mode ${payload.level}`);
 
-      const result = await runEngine('gs/bin/gswin64c.exe', gsArgs);
+      // Hitung total halaman untuk progress yang lebih mulus
+      let totalPages = 1;
+      try {
+        const pdfBytes = await fs.promises.readFile(payload.filePath);
+        const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+        totalPages = pdfDoc.getPageCount();
+      } catch (e) {
+        log.warn(`Gagal membaca total halaman untuk progress:`, e);
+      }
+
+      sendProgress(window, taskId, 10);
+
+      const result = await runEngine('gs/bin/gswin64c.exe', gsArgs, {
+        onOutput: (data) => {
+          const match = data.match(/Page\s+(\d+)/);
+          if (match && match[1]) {
+            const currentPage = parseInt(match[1], 10);
+            const percent = Math.min(currentPage / totalPages, 1);
+            // Progress Ghostscript dari 10% s.d. 95%
+            const currentProgress = 10 + Math.floor(percent * 85);
+            sendProgress(window, taskId, currentProgress);
+          }
+        }
+      });
+      
+      sendProgress(window, taskId, 100);
 
       if (!result.success || !fs.existsSync(tempOutputPath)) {
         throw new Error('Proses kompresi Ghostscript gagal atau file tidak terbentuk.');

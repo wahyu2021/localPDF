@@ -5,6 +5,7 @@ import { IPC_CHANNELS } from '../../shared/ipc-channels';
 import { MergePayload, MergeResult } from '../../shared/ipc-types';
 import { runEngine } from '../engines/engineRunner';
 import { generateTaskId, getOutputPath } from '../utils/tempFileManager';
+import { sendProgress } from '../utils/progress';
 import log from 'electron-log';
 
 export function registerMergeHandler(mainWindow: BrowserWindow) {
@@ -15,6 +16,9 @@ export function registerMergeHandler(mainWindow: BrowserWindow) {
       }
 
       const taskId = generateTaskId();
+      const window = BrowserWindow.fromWebContents(event.sender);
+      sendProgress(window, taskId, 10);
+
       const firstFileName = path.parse(path.basename(payload.filePaths[0])).name;
       const outputFileName = `${firstFileName}_merged.pdf`;
       const tempOutputPath = getOutputPath(outputFileName, taskId);
@@ -32,6 +36,8 @@ export function registerMergeHandler(mainWindow: BrowserWindow) {
 
       // Panggil binary QPDF
       const result = await runEngine('qpdf/qpdf.exe', qpdfArgs);
+      
+      sendProgress(window, taskId, 100);
 
       if (!result.success || !fs.existsSync(tempOutputPath)) {
         throw new Error('Proses penggabungan QPDF gagal atau file tidak terbentuk.');
