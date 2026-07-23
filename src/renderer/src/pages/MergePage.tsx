@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { FileText, X, UploadCloud, GripVertical, Save, Loader2, Layers } from 'lucide-react';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { useMergeStore } from '../store/mergeStore';
 import { cn } from '../utils/cn';
 
@@ -139,13 +141,14 @@ export function MergePage() {
                 <h2 className="text-2xl font-bold text-slate-800">Gabungkan PDF</h2>
                 <p className="text-sm text-slate-500 mt-1">Susun dan gabungkan beberapa file PDF menjadi satu dokumen.</p>
               </div>
-              <button
+              <Button
+                variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-4 py-2.5 text-sm font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-100 flex items-center gap-2 transition-colors shadow-sm"
+                className="text-teal-700 bg-teal-50 border-teal-200 hover:bg-teal-100 shadow-sm"
               >
-                <UploadCloud size={18} />
+                <UploadCloud size={18} className="mr-2" />
                 Tambah File
-              </button>
+              </Button>
               <input
                 type="file"
                 multiple
@@ -159,56 +162,61 @@ export function MergePage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in slide-in-from-bottom-4 duration-500">
               {/* Kolom Kiri: Area Tambah File */}
               <div className="lg:col-span-5 flex flex-col h-full space-y-6">
-                <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex flex-col h-full min-h-[300px]">
-                  <h4 className="text-sm font-bold text-slate-800 mb-4">Tambahkan PDF Baru</h4>
-                  <div 
-                    className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 text-slate-400 hover:border-teal-400 hover:bg-teal-50 transition-colors cursor-pointer"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <div className="bg-white p-4 rounded-full shadow-sm mb-4">
-                      <UploadCloud size={32} className="text-teal-600" />
+                <Card className="shadow-sm border-slate-200 flex flex-col h-full min-h-[300px]">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-sm">Tambahkan PDF Baru</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-1 flex flex-col">
+                    <div 
+                      className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 text-slate-400 hover:border-teal-400 hover:bg-teal-50 transition-colors cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+                        <UploadCloud size={32} className="text-teal-600" />
+                      </div>
+                      <p className="text-sm font-bold text-slate-600 mb-1">Pilih File PDF</p>
+                      <p className="text-xs text-slate-500 text-center px-4">Tarik & jatuhkan file atau klik untuk menelusuri</p>
                     </div>
-                    <p className="text-sm font-bold text-slate-600 mb-1">Pilih File PDF</p>
-                    <p className="text-xs text-slate-500 text-center px-4">Tarik & jatuhkan file atau klik untuk menelusuri</p>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
 
                 <div className="flex gap-3">
-                  <button
+                  <Button
+                    variant="outline"
                     onClick={clearFiles}
                     disabled={isProcessing || files.length === 0}
-                    className="flex-1 px-4 py-3.5 text-sm font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 disabled:opacity-60 transition-colors shadow-sm"
+                    className="flex-1 py-6 text-slate-600 shadow-sm"
                   >
                     Bersihkan
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={handleMerge}
                     disabled={isProcessing || files.length < 2}
-                    className="flex-[2] flex justify-center items-center gap-2 px-4 py-3.5 text-sm font-bold text-white bg-teal-600 border border-teal-700 rounded-xl hover:bg-teal-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors shadow-sm"
+                    className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
                   >
                     {isProcessing ? (
                       <>
-                        <Loader2 size={18} className="animate-spin" />
+                        <Loader2 size={18} className="animate-spin mr-2" />
                         Menggabungkan...
                       </>
                     ) : (
                       'Gabungkan PDF'
                     )}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
               {/* Kolom Kanan: Daftar File (Drag & Drop Reorder) */}
               <div className="lg:col-span-7 flex flex-col h-full">
-                <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm h-full flex flex-col min-h-[365px]">
-                  <div className="flex justify-between items-center mb-5">
-                    <h4 className="text-sm font-bold text-slate-800">Urutan Penggabungan</h4>
+                <Card className="shadow-sm border-slate-200 h-full flex flex-col min-h-[365px]">
+                  <CardHeader className="pb-4 flex flex-row items-center justify-between space-y-0">
+                    <CardTitle className="text-sm">Urutan Penggabungan</CardTitle>
                     <span className="text-xs font-bold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full">
                       {files.length} File
                     </span>
-                  </div>
+                  </CardHeader>
                   
-                  <div className="flex-1 overflow-y-auto pr-2 -mr-2 space-y-3">
+                  <CardContent className="flex-1 overflow-y-auto pr-2 -mr-2 space-y-3">
                     {files.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-slate-400 min-h-[200px] border-2 border-dashed border-slate-200 rounded-xl">
                         <Layers size={32} className="mb-2 text-slate-300" />
@@ -251,54 +259,57 @@ export function MergePage() {
                         </div>
                       ))
                     )}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
         ) : (
           /* VIEW 2: Result & Save Mode */
           <div className="animate-in zoom-in-95 duration-500 max-w-2xl mx-auto mt-12">
-            <div className="bg-white border border-slate-200 rounded-2xl p-10 shadow-sm text-center">
-              <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Layers size={40} />
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Penggabungan Selesai!</h2>
-              <p className="text-slate-500 mb-10 text-lg">
-                <span className="font-extrabold text-emerald-600">{files.length}</span> file PDF Anda berhasil digabungkan menjadi satu.
-              </p>
-              
-              <div className="grid grid-cols-2 gap-6 mb-10">
-                <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                  <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Total Ukuran Awal</p>
-                  <p className="text-2xl font-bold text-slate-700">
-                    {mergeResult.totalOriginalSize ? formatBytes(mergeResult.totalOriginalSize) : '?'}
-                  </p>
+            <Card className="border-slate-200 shadow-sm text-center pt-8">
+              <CardContent>
+                <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Layers size={40} />
                 </div>
-                <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200">
-                  <p className="text-xs font-bold text-emerald-600 mb-2 uppercase tracking-widest">Ukuran Gabungan</p>
-                  <p className="text-2xl font-black text-emerald-700">
-                    {mergeResult.newSize ? formatBytes(mergeResult.newSize) : '?'}
-                  </p>
+                <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Penggabungan Selesai!</h2>
+                <p className="text-slate-500 mb-10 text-lg">
+                  <span className="font-extrabold text-emerald-600">{files.length}</span> file PDF Anda berhasil digabungkan menjadi satu.
+                </p>
+                
+                <div className="grid grid-cols-2 gap-6 mb-10">
+                  <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Total Ukuran Awal</p>
+                    <p className="text-2xl font-bold text-slate-700">
+                      {mergeResult.totalOriginalSize ? formatBytes(mergeResult.totalOriginalSize) : '?'}
+                    </p>
+                  </div>
+                  <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200">
+                    <p className="text-xs font-bold text-emerald-600 mb-2 uppercase tracking-widest">Ukuran Gabungan</p>
+                    <p className="text-2xl font-black text-emerald-700">
+                      {mergeResult.newSize ? formatBytes(mergeResult.newSize) : '?'}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={handleCancel}
-                  className="px-8 py-3.5 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
-                >
-                  Ulangi
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="px-8 py-3.5 text-sm font-bold text-white bg-teal-600 border border-teal-700 rounded-xl hover:bg-teal-700 flex items-center gap-2 transition-colors shadow-sm"
-                >
-                  <Save size={18} />
-                  Simpan Hasil Gabungan
-                </button>
-              </div>
-            </div>
+                <div className="flex justify-center gap-4">
+                  <Button
+                    variant="outline"
+                    onClick={handleCancel}
+                    className="px-8 py-6 text-sm font-bold shadow-sm"
+                  >
+                    Ulangi
+                  </Button>
+                  <Button
+                    onClick={handleSave}
+                    className="px-8 py-6 text-sm font-bold bg-teal-600 hover:bg-teal-700 shadow-sm"
+                  >
+                    <Save size={18} className="mr-2" />
+                    Simpan Hasil Gabungan
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

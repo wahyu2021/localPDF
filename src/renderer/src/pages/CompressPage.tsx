@@ -6,6 +6,8 @@ import { QualitySelector } from '../components/QualitySelector';
 import { useCompressStore } from '../store/compressStore';
 import { toast } from 'sonner';
 import { Loader2, Save, RotateCcw, ArrowRight, UploadCloud } from 'lucide-react';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -106,42 +108,32 @@ export function CompressPage() {
     : 0;
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-5xl mx-auto pb-10">
       <div className="space-y-6">
         {!file ? (
-          <div className="bg-white border border-slate-300 rounded-md overflow-hidden shadow-sm">
-            <div className="p-4 bg-slate-100 border-b border-slate-300 flex justify-between items-center">
-              <div>
-                <h3 className="text-sm font-semibold text-slate-800">Pilih File PDF</h3>
-              </div>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded hover:bg-teal-100 flex items-center gap-2 transition-colors"
-              >
-                <UploadCloud size={16} />
-                Pilih File PDF
-              </button>
+          <div className="pt-8 animate-in fade-in duration-500">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-slate-800">Kompres PDF</h2>
+              <p className="text-slate-500 mt-2">Perkecil ukuran file PDF Anda dengan mudah tanpa banyak kehilangan kualitas.</p>
             </div>
-            <div className="p-4 bg-slate-50 min-h-[300px] flex items-center justify-center">
-              <DragDropZone onFileSelect={setFile} className="h-64" />
-            </div>
-            <div className="p-4 border-t border-slate-300 bg-white flex justify-end gap-3 h-[68px]">
-              {/* Footer placeholder for consistency */}
-            </div>
+            <DragDropZone onFileSelect={setFile} className="h-72 shadow-sm" />
           </div>
         ) : !compressedResult ? (
-          <div className="bg-white border border-slate-300 rounded-md overflow-hidden shadow-sm">
-            <div className="p-4 bg-slate-100 border-b border-slate-300 flex justify-between items-center">
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header Section */}
+            <div className="flex items-center justify-between mb-6 pt-4">
               <div>
-                <h3 className="text-sm font-semibold text-slate-800">Pengaturan Kompresi</h3>
+                <h2 className="text-2xl font-bold text-slate-800">Pengaturan Kompresi</h2>
+                <p className="text-sm text-slate-500 mt-1">Sesuaikan kualitas file PDF Anda sebelum dikompres.</p>
               </div>
-              <button
+              <Button
+                variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded hover:bg-teal-100 flex items-center gap-2 transition-colors"
+                className="text-teal-700 bg-teal-50 border-teal-200 hover:bg-teal-100 shadow-sm"
               >
-                <UploadCloud size={16} />
+                <UploadCloud size={18} className="mr-2" />
                 Ganti File
-              </button>
+              </Button>
               <input
                 type="file"
                 accept="application/pdf"
@@ -151,95 +143,98 @@ export function CompressPage() {
               />
             </div>
 
-            <div className="p-4 bg-slate-50 min-h-[300px]">
-              <div className="bg-white border border-slate-200 rounded-md p-6 shadow-sm">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Kolom Kiri: Preview */}
-                  <div className="space-y-4">
-                    <ThumbnailPreview file={file} onClear={reset} />
-                    <PDFCanvasPreview file={file} />
-                  </div>
-                  
-                  {/* Kolom Kanan: Pengaturan */}
-                  <div>
-                    <h4 className="text-sm font-semibold text-slate-800 mb-4">Tingkat Kompresi</h4>
+            {/* 2 Column Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Kolom Kiri: Previews */}
+              <div className="lg:col-span-7 space-y-4">
+                <ThumbnailPreview file={file} onClear={reset} />
+                <PDFCanvasPreview file={file} />
+              </div>
+              
+              {/* Kolom Kanan: Settings & Actions */}
+              <div className="lg:col-span-5 space-y-6">
+                <Card className="shadow-sm border-slate-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-sm">Tingkat Kompresi</CardTitle>
+                  </CardHeader>
+                  <CardContent>
                     <QualitySelector />
-                  </div>
+                  </CardContent>
+                </Card>
+                
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={reset}
+                    disabled={isProcessing}
+                    className="flex-1 py-6"
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    onClick={handleCompress}
+                    disabled={isProcessing}
+                    className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin mr-2" />
+                        Memproses...
+                      </>
+                    ) : (
+                      'Kompres Sekarang'
+                    )}
+                  </Button>
                 </div>
               </div>
-            </div>
-            
-            <div className="p-4 border-t border-slate-300 bg-white flex justify-end gap-3">
-              <button
-                onClick={reset}
-                disabled={isProcessing}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-slate-100 border border-transparent rounded hover:bg-slate-200 disabled:opacity-60"
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleCompress}
-                disabled={isProcessing}
-                className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-teal-700 border border-teal-800 rounded hover:bg-teal-800 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" />
-                    Memproses...
-                  </>
-                ) : (
-                  'Kompres PDF Sekarang'
-                )}
-              </button>
             </div>
           </div>
         ) : (
           /* Tampilan Berhasil & Perbandingan Ukuran */
-          <div className="bg-white border border-slate-300 rounded-md overflow-hidden shadow-sm">
-            <div className="p-4 bg-slate-100 border-b border-slate-300">
-              <h3 className="text-sm font-semibold text-slate-800">Hasil Kompresi</h3>
-            </div>
-            
-            <div className="p-6">
-              <table className="w-full text-left border-collapse">
-                <tbody>
-                  <tr className="border-b border-slate-200">
-                    <th className="py-3 px-4 bg-slate-50 text-sm font-medium text-slate-600 w-1/3">Ukuran Awal</th>
-                    <td className="py-3 px-4 text-sm text-slate-800">
+          <div className="animate-in zoom-in-95 duration-500 max-w-2xl mx-auto mt-12">
+            <Card className="border-slate-200 shadow-sm text-center pt-8">
+              <CardContent>
+                <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Save size={40} />
+                </div>
+                <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Kompresi Berhasil!</h2>
+                <p className="text-slate-500 mb-10 text-lg">
+                  File PDF Anda berhasil diperkecil sebesar <span className="font-extrabold text-emerald-600">{savedPercentage}%</span>.
+                </p>
+                
+                <div className="grid grid-cols-2 gap-6 mb-10">
+                  <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Ukuran Awal</p>
+                    <p className="text-2xl font-bold text-slate-700">
                       {compressedResult.originalSize ? formatBytes(compressedResult.originalSize) : '?'}
-                    </td>
-                  </tr>
-                  <tr className="border-b border-slate-200">
-                    <th className="py-3 px-4 bg-slate-50 text-sm font-medium text-slate-600">Ukuran Baru</th>
-                    <td className="py-3 px-4 text-sm font-bold text-teal-700">
+                    </p>
+                  </div>
+                  <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200">
+                    <p className="text-xs font-bold text-emerald-600 mb-2 uppercase tracking-widest">Ukuran Baru</p>
+                    <p className="text-2xl font-black text-emerald-700">
                       {compressedResult.newSize ? formatBytes(compressedResult.newSize) : '?'}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="py-3 px-4 bg-slate-50 text-sm font-medium text-slate-600">Penghematan</th>
-                    <td className="py-3 px-4 text-sm font-bold text-green-600">
-                      {savedPercentage}% Lebih Kecil
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                    </p>
+                  </div>
+                </div>
 
-            <div className="p-4 border-t border-slate-300 bg-slate-50 flex justify-end gap-3">
-              <button
-                onClick={handleCancel}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-50 flex items-center gap-2"
-              >
-                Batal / Ulangi
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-5 py-2.5 text-sm font-semibold text-white bg-teal-700 border border-teal-800 rounded hover:bg-teal-800 flex items-center gap-2 shadow-sm"
-              >
-                <Save size={16} />
-                Simpan File Kompresi
-              </button>
-            </div>
+                <div className="flex justify-center gap-4">
+                  <Button
+                    variant="outline"
+                    onClick={handleCancel}
+                    className="px-8 py-6 text-sm font-bold shadow-sm"
+                  >
+                    Ulangi
+                  </Button>
+                  <Button
+                    onClick={handleSave}
+                    className="px-8 py-6 text-sm font-bold bg-teal-600 hover:bg-teal-700 shadow-sm"
+                  >
+                    <Save size={18} className="mr-2" />
+                    Simpan File Kompresi
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

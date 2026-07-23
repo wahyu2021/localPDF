@@ -1,6 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useSplitStore, SplitMode } from '../store/splitStore';
-import { FolderOpen, Scissors, File as FileIcon, X, CheckCircle2, UploadCloud, Loader2 } from 'lucide-react';
+import { FileArchive, FolderOpen, Loader2, UploadCloud, X } from 'lucide-react';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { toast } from 'sonner';
 import { ThumbnailPreview } from '../components/ThumbnailPreview';
 import { PDFCanvasPreview } from '../components/PDFCanvasPreview';
@@ -134,13 +139,14 @@ export function SplitPage() {
                 <h2 className="text-2xl font-bold text-slate-800">Pisahkan PDF</h2>
                 <p className="text-sm text-slate-500 mt-1">Ekstrak halaman tertentu atau pecah file menjadi banyak bagian.</p>
               </div>
-              <button
+              <Button
+                variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-4 py-2.5 text-sm font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-100 flex items-center gap-2 transition-colors shadow-sm"
+                className="text-teal-700 bg-teal-50 border-teal-200 hover:bg-teal-100 shadow-sm"
               >
-                <UploadCloud size={18} />
+                <UploadCloud size={18} className="mr-2" />
                 {file ? 'Ganti File' : 'Pilih File PDF'}
-              </button>
+              </Button>
               <input
                 type="file"
                 accept=".pdf,application/pdf"
@@ -177,84 +183,83 @@ export function SplitPage() {
 
                 {/* Kolom Kanan: Pengaturan */}
                 <div className="lg:col-span-5 space-y-6">
-                  <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                    <h4 className="text-sm font-bold text-slate-800 mb-5">Mode Pemecahan</h4>
-                    <div className="flex flex-col gap-4">
-                      <label className={`flex items-start gap-4 p-5 border rounded-xl cursor-pointer transition-colors ${mode === 'extract' ? 'border-teal-500 bg-teal-50/50 ring-1 ring-teal-500' : 'border-slate-200 hover:bg-slate-50'}`}>
-                        <div className="mt-0.5">
-                          <input
-                            type="radio"
-                            name="splitMode"
-                            value="extract"
-                            checked={mode === 'extract'}
-                            onChange={() => setMode('extract')}
-                            className="w-4 h-4 text-teal-600 focus:ring-teal-500"
-                          />
-                        </div>
-                        <div>
-                          <span className="block text-sm font-bold text-slate-800">Ekstrak Halaman</span>
-                          <span className="block text-xs text-slate-500 mt-1 leading-relaxed">Pilih halaman atau rentang halaman tertentu untuk disatukan menjadi 1 file.</span>
-                        </div>
-                      </label>
-                      
-                      <label className={`flex items-start gap-4 p-5 border rounded-xl cursor-pointer transition-colors ${mode === 'split_all' ? 'border-teal-500 bg-teal-50/50 ring-1 ring-teal-500' : 'border-slate-200 hover:bg-slate-50'}`}>
-                        <div className="mt-0.5">
-                          <input
-                            type="radio"
-                            name="splitMode"
-                            value="split_all"
-                            checked={mode === 'split_all'}
-                            onChange={() => setMode('split_all')}
-                            className="w-4 h-4 text-teal-600 focus:ring-teal-500"
-                          />
-                        </div>
-                        <div>
-                          <span className="block text-sm font-bold text-slate-800">Pecah Semua Halaman</span>
-                          <span className="block text-xs text-slate-500 mt-1 leading-relaxed">Pisahkan setiap halaman menjadi file PDF individual (1 file = 1 halaman).</span>
-                        </div>
-                      </label>
-                    </div>
+                  <Card className="shadow-sm border-slate-200">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="text-sm">Mode Pemecahan</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <RadioGroup value={mode} onValueChange={(val: any) => setMode(val)} className="flex flex-col gap-4">
+                        <Label
+                          htmlFor="extract"
+                          className={`flex items-start gap-4 p-5 border-2 rounded-xl cursor-pointer transition-colors ${mode === 'extract' ? 'border-teal-500 bg-teal-50/50' : 'border-slate-200 hover:bg-slate-50'}`}
+                        >
+                          <RadioGroupItem value="extract" id="extract" className="mt-0.5 sr-only" />
+                          <div className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center ${mode === 'extract' ? 'border-teal-600' : 'border-slate-300'}`}>
+                            {mode === 'extract' && <div className="w-2 h-2 rounded-full bg-teal-600" />}
+                          </div>
+                          <div>
+                            <span className="block text-sm font-bold text-slate-800">Ekstrak Halaman</span>
+                            <span className="block text-xs text-slate-500 mt-1 leading-relaxed font-normal">Pilih halaman atau rentang halaman tertentu untuk disatukan menjadi 1 file.</span>
+                          </div>
+                        </Label>
+                        
+                        <Label
+                          htmlFor="split_all"
+                          className={`flex items-start gap-4 p-5 border-2 rounded-xl cursor-pointer transition-colors ${mode === 'split_all' ? 'border-teal-500 bg-teal-50/50' : 'border-slate-200 hover:bg-slate-50'}`}
+                        >
+                          <RadioGroupItem value="split_all" id="split_all" className="mt-0.5 sr-only" />
+                          <div className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center ${mode === 'split_all' ? 'border-teal-600' : 'border-slate-300'}`}>
+                            {mode === 'split_all' && <div className="w-2 h-2 rounded-full bg-teal-600" />}
+                          </div>
+                          <div>
+                            <span className="block text-sm font-bold text-slate-800">Pecah Semua Halaman</span>
+                            <span className="block text-xs text-slate-500 mt-1 leading-relaxed font-normal">Pisahkan setiap halaman menjadi file PDF individual (1 file = 1 halaman).</span>
+                          </div>
+                        </Label>
+                      </RadioGroup>
 
-                    {mode === 'extract' && (
-                      <div className="mt-6 pt-6 border-t border-slate-100 animate-in fade-in">
-                        <label htmlFor="pagesInput" className="block text-sm font-bold text-slate-800 mb-2">Rentang Halaman</label>
-                        <input
-                          id="pagesInput"
-                          ref={pageInputRef}
-                          type="text"
-                          value={pagesInput}
-                          onChange={handlePagesInputChange}
-                          placeholder="Contoh: 1-3, 5, 7-10"
-                          className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all shadow-sm"
-                        />
-                        <p className="text-xs text-slate-500 mt-2">Gunakan koma untuk memisahkan, dan strip untuk rentang.</p>
-                      </div>
-                    )}
-                  </div>
+                      {mode === 'extract' && (
+                        <div className="mt-6 pt-6 border-t border-slate-100 animate-in fade-in">
+                          <Label htmlFor="pagesInput" className="block text-sm font-bold text-slate-800 mb-2">Rentang Halaman</Label>
+                          <Input
+                            id="pagesInput"
+                            ref={pageInputRef as any}
+                            type="text"
+                            value={pagesInput}
+                            onChange={handlePagesInputChange}
+                            placeholder="Contoh: 1-3, 5, 7-10"
+                            className="w-full bg-slate-50 border-slate-200 h-12 shadow-sm focus-visible:ring-teal-500"
+                          />
+                          <p className="text-xs text-slate-500 mt-2">Gunakan koma untuk memisahkan, dan strip untuk rentang.</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
 
                   {/* Actions */}
                   <div className="flex gap-3">
-                    <button
+                    <Button
+                      variant="outline"
                       onClick={handleRemoveFile}
                       disabled={isProcessing}
-                      className="flex-1 px-4 py-3.5 text-sm font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 disabled:opacity-60 transition-colors shadow-sm"
+                      className="flex-1 py-6 shadow-sm text-slate-600"
                     >
                       Batal
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={handleProcess}
                       disabled={isProcessing}
-                      className="flex-[2] flex items-center justify-center gap-2 px-4 py-3.5 text-sm font-bold text-white bg-teal-600 border border-teal-700 rounded-xl hover:bg-teal-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors shadow-sm"
+                      className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
                     >
                       {isProcessing ? (
                         <>
-                          <Loader2 size={18} className="animate-spin" />
+                          <Loader2 size={18} className="animate-spin mr-2" />
                           Memproses...
                         </>
                       ) : (
                         'Pisahkan Sekarang'
                       )}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -263,38 +268,41 @@ export function SplitPage() {
         ) : (
           /* Tampilan Berhasil */
           <div className="animate-in zoom-in-95 duration-500 max-w-2xl mx-auto mt-12">
-            <div className="bg-white border border-slate-200 rounded-2xl p-10 shadow-sm text-center">
-              <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FileArchive size={40} />
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Pemecahan Selesai!</h2>
-              <p className="text-slate-500 mb-10 text-lg">
-                Proses {mode === 'extract' ? 'ekstraksi' : 'pemecahan'} PDF berhasil menghasilkan <span className="font-extrabold text-emerald-600">{result.filesGenerated}</span> file.
-              </p>
-              
-              <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 text-left mb-10">
-                <p className="text-xs font-bold text-slate-400 mb-1 uppercase tracking-widest">Lokasi File Disimpan</p>
-                <p className="text-sm font-medium text-slate-700 break-all select-all font-mono bg-white p-3 border border-slate-200 rounded mt-2">
-                  {result.outputDirectory}
+            <Card className="border-slate-200 shadow-sm text-center pt-8">
+              <CardContent>
+                <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FileArchive size={40} />
+                </div>
+                <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Pemecahan Selesai!</h2>
+                <p className="text-slate-500 mb-10 text-lg">
+                  Proses {mode === 'extract' ? 'ekstraksi' : 'pemecahan'} PDF berhasil menghasilkan <span className="font-extrabold text-emerald-600">{result.filesGenerated}</span> file.
                 </p>
-              </div>
+                
+                <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 text-left mb-10">
+                  <p className="text-xs font-bold text-slate-400 mb-1 uppercase tracking-widest">Lokasi File Disimpan</p>
+                  <p className="text-sm font-medium text-slate-700 break-all select-all font-mono bg-white p-3 border border-slate-200 rounded mt-2">
+                    {result.outputDirectory}
+                  </p>
+                </div>
 
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={reset}
-                  className="px-8 py-3.5 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
-                >
-                  Proses File Lain
-                </button>
-                <button
-                  onClick={handleOpenFolder}
-                  className="px-8 py-3.5 text-sm font-bold text-white bg-teal-600 border border-teal-700 rounded-xl hover:bg-teal-700 flex items-center gap-2 transition-colors shadow-sm"
-                >
-                  <FolderOpen size={18} />
-                  Buka Folder Hasil
-                </button>
-              </div>
-            </div>
+                <div className="flex justify-center gap-4">
+                  <Button
+                    variant="outline"
+                    onClick={reset}
+                    className="px-8 py-6 text-sm font-bold shadow-sm"
+                  >
+                    Proses File Lain
+                  </Button>
+                  <Button
+                    onClick={handleOpenFolder}
+                    className="px-8 py-6 text-sm font-bold bg-teal-600 hover:bg-teal-700 shadow-sm"
+                  >
+                    <FolderOpen size={18} className="mr-2" />
+                    Buka Folder Hasil
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

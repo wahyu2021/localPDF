@@ -18,7 +18,8 @@
     "paths": {
       "@engines/*": ["src/main/engines/*"],
       "@utils/*": ["src/main/utils/*"],
-      "@shared/*": ["src/shared/*"]
+      "@shared/*": ["src/shared/*"],
+      "@/*": ["src/renderer/src/*"]
     }
   },
   "include": [
