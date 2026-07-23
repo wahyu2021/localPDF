@@ -24,7 +24,7 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ---
 
-## [~] Track: Fitur Convert PDF (Dua Arah: Office & Image)
+## [x] Track: Fitur Convert PDF (Dua Arah: Office & Image)
 - **Tautan:** [006-fitur-convert-pdf](tracks/006-fitur-convert-pdf/index.md)
 
 ---
