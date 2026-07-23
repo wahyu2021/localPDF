@@ -38,6 +38,7 @@ LocalPDF adalah aplikasi desktop Electron yang memproses file PDF sepenuhnya sec
 | Binary Execution | **execa** | Promise-based API, lebih rapi dari `child_process` untuk error/timeout/output. |
 | Task ID | **nanoid** | ID unik per task untuk progress tracking & temp folder isolation. |
 | Zip Output | **archiver** | Bungkus hasil split/batch jadi 1 `.zip`. |
+| PDF Manipulation | **pdf-lib** | Library JS native (tanpa eksternal exe) untuk konversi Image-to-PDF dan operasi PDF murni lainnya. |
 | Logging | **electron-log** | Log tersimpan ke file — penting untuk debug laporan bug, bukan hanya `console.log`. |
 | IPC Security | **contextBridge** | `contextIsolation: true`, `nodeIntegration: false`. Renderer tidak pernah akses Node langsung. |
 
