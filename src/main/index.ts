@@ -6,6 +6,7 @@ import { initTempFolders, cleanupTempFolders } from './utils/tempFileManager';
 import { IPC_CHANNELS } from '../shared/ipc-channels';
 import { registerSplitHandler } from './handlers/splitHandler';
 import { registerConvertHandler } from './handlers/convertHandler';
+import { registerSecurityHandler } from './handlers/securityHandler';
 
 app.whenReady().then(() => {
   // Siapkan folder temporer
@@ -23,6 +24,7 @@ app.whenReady().then(() => {
   registerMergeHandler(mainWindow);
   registerSplitHandler(mainWindow);
   registerConvertHandler(mainWindow);
+  registerSecurityHandler(mainWindow);
 
   app.on('activate', () => {
     // Pada macOS biasanya re-create window saat icon di-klik
@@ -32,6 +34,7 @@ app.whenReady().then(() => {
       registerMergeHandler(newWin);
       registerSplitHandler(newWin);
       registerConvertHandler(newWin);
+      registerSecurityHandler(newWin);
     }
   });
 });

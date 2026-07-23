@@ -23,6 +23,9 @@ const api = {
   convertPdf: (payload: ConvertPayload): Promise<ConvertResult> =>
     ipcRenderer.invoke(IPC_CHANNELS.CONVERT_PDF, payload),
     
+  securityPdf: (payload: any): Promise<any> =>
+    ipcRenderer.invoke(IPC_CHANNELS.SECURITY_PDF, payload),
+
   selectFolder: (): Promise<string | null> => 
     ipcRenderer.invoke(IPC_CHANNELS.SELECT_FOLDER),
     

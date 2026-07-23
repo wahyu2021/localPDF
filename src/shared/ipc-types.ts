@@ -6,7 +6,7 @@ export interface CompressPayload {
 
 export interface CompressResult {
   success: boolean;
-  tempPath?: string; // Berubah jadi tempPath, bukan langsung outputPath
+  tempPath?: string;
   originalSize?: number;
   newSize?: number;
   error?: string;
@@ -65,5 +65,24 @@ export interface ConvertResult {
   success: boolean;
   outputDirectory?: string;
   filesGenerated?: number;
+  error?: string;
+}
+
+export interface SecurityPayload {
+  filePath: string;
+  outputDirectory: string;
+  mode: 'lock' | 'unlock' | 'restrict';
+  userPassword?: string;
+  ownerPassword?: string;
+  restrictions?: {
+    print?: 'none' | 'low' | 'full';
+    modify?: 'none' | 'annotate' | 'form' | 'assembly' | 'all';
+    extract?: 'y' | 'n';
+  };
+}
+
+export interface SecurityResult {
+  success: boolean;
+  outputPath?: string;
   error?: string;
 }

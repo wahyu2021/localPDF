@@ -6,6 +6,7 @@ export const IPC_CHANNELS = {
   CONVERT_PDF: 'convert-pdf',
   PROTECT_PDF: 'protect-pdf',
   UNLOCK_PDF: 'unlock-pdf',
+  SECURITY_PDF: 'security-pdf',
   PROGRESS_UPDATE: 'progress-update',
   OPEN_OUTPUT_FOLDER: 'open-output-folder',
   SELECT_FOLDER: 'select-folder',
