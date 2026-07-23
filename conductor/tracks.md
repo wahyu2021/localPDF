@@ -31,8 +31,3 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ## [ ] Track: Fitur Security PDF (Protect & Unlock)
 - **Tautan:** [007-fitur-security-pdf](tracks/007-fitur-security-pdf/index.md)
-
----
-
-- [x] **Track: 007-fitur-security-pdf**
-*Link: [./tracks/007-fitur-security-pdf_20260723/](./tracks/007-fitur-security-pdf_20260723/)*
