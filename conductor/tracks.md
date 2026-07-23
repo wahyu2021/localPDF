@@ -36,3 +36,8 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ## [x] Track: 008-chore-refactor-pages
 - **Tautan:** [008-chore-refactor-pages](archive/008-chore-refactor-pages/index.md)
+
+---
+
+- [ ] **Track: PDF ke Word**
+*Link: [./tracks/pdf-to-word_20260723/](./tracks/pdf-to-word_20260723/)*
