@@ -40,3 +40,17 @@ export interface MergeResult {
   newSize?: number;
   error?: string;
 }
+
+export interface SplitPayload {
+  filePath: string;
+  mode: 'extract' | 'split_all';
+  pages?: string;
+  outputDirectory: string;
+}
+
+export interface SplitResult {
+  success: boolean;
+  outputDirectory?: string;
+  filesGenerated?: number;
+  error?: string;
+}
