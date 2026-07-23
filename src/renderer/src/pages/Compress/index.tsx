@@ -182,7 +182,7 @@ export function CompressPage() {
         </div>
       ) : (
         <SuccessCard
-          icon={<Save size={40} />}
+          icon={Save}
           iconColorClass="bg-emerald-100 text-emerald-600"
           title="Kompresi Berhasil!"
           description={

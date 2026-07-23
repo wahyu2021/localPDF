@@ -273,7 +273,7 @@ export function SplitPage() {
         </div>
       ) : (
         <SuccessCard
-          icon={<FileArchive size={40} />}
+          icon={FileArchive}
           iconColorClass="bg-emerald-100 text-emerald-600"
           title="Pemecahan Selesai!"
           description={

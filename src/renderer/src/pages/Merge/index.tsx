@@ -265,7 +265,7 @@ export function MergePage() {
         </div>
       ) : (
         <SuccessCard
-          icon={<Layers size={40} />}
+          icon={Layers}
           iconColorClass="bg-emerald-100 text-emerald-600"
           title="Penggabungan Selesai!"
           description={
