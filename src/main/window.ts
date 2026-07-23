@@ -13,7 +13,8 @@ export function createMainWindow(): BrowserWindow {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       contextIsolation: true, // Wajib aktif demi keamanan
-      nodeIntegration: false  // Wajib non-aktif demi keamanan
+      nodeIntegration: false, // Wajib non-aktif demi keamanan
+      plugins: true           // Wajib aktif agar native PDF viewer Electron berfungsi di iframe/embed
     }
   });
 
