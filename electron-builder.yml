@@ -3,6 +3,7 @@ productName: LocalPDF
 copyright: Copyright © 2026
 
 directories:
+  buildResources: resources
   output: build
 
 # Arahkan ke hasil compile TypeScript di dist/
@@ -32,12 +33,12 @@ nsis:
   createDesktopShortcut: true
   createStartMenuShortcut: true
   shortcutName: LocalPDF
-  installerIcon: resources/icon.ico
-  uninstallerIcon: resources/icon.ico
-  installerSidebar: resources/sidebar.bmp
-  uninstallerSidebar: resources/sidebar.bmp
-  installerHeader: resources/header.bmp
-  license: resources/license.txt
+  installerIcon: icon.ico
+  uninstallerIcon: icon.ico
+  installerSidebar: sidebar.bmp
+  uninstallerSidebar: sidebar.bmp
+  installerHeader: header.bmp
+  license: license.txt
 
 # Placeholder untuk build macOS/Linux di v2
 # mac:
