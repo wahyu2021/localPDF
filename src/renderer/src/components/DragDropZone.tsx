@@ -56,11 +56,8 @@ export function DragDropZone({ onFileSelect, className }: DragDropZoneProps) {
     <div
       className={cn(
         'relative flex flex-col items-center justify-center w-full max-w-3xl p-10 mx-auto',
-        'border-2 border-dashed rounded-md cursor-pointer transition-colors',
-        'bg-slate-50',
-        isDragging
-          ? 'border-teal-600 bg-teal-50'
-          : 'border-slate-300 hover:border-slate-400',
+        'border-2 border-dashed rounded-2xl cursor-pointer transition-colors shadow-sm',
+        isDragging ? 'border-teal-500 bg-teal-50 text-teal-600' : 'border-slate-300 bg-white text-slate-400 hover:border-teal-400 hover:bg-teal-50',
         className
       )}
       onDragOver={handleDragOver}
@@ -78,21 +75,13 @@ export function DragDropZone({ onFileSelect, className }: DragDropZoneProps) {
       />
 
       <div className="relative z-10 flex flex-col items-center">
-        <div
-          className={cn(
-            'flex items-center justify-center w-16 h-16 mb-4 rounded-md',
-            'transition-colors',
-            isDragging ? 'bg-teal-100 text-teal-700' : 'bg-slate-200 text-slate-600'
-          )}
-        >
-          {isDragging ? <FileType2 size={32} /> : <UploadCloud size={32} />}
+        <div className={`p-4 rounded-full mb-4 transition-colors ${isDragging ? 'bg-teal-100' : 'bg-slate-100'}`}>
+          <UploadCloud size={40} className={isDragging ? 'text-teal-600' : 'text-slate-400'} />
         </div>
         
-        <h3 className="mb-1 text-lg font-semibold text-slate-800">
-          Pilih file PDF
-        </h3>
-        <p className="text-sm text-slate-500">
-          atau tarik dan jatuhkan file PDF ke sini
+        <h3 className="text-lg font-bold text-slate-800 mb-1">Pilih atau Tarik File PDF</h3>
+        <p className="text-sm text-slate-500 text-center">
+          Jatuhkan file di sini untuk memulai
         </p>
       </div>
     </div>

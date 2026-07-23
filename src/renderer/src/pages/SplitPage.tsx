@@ -2,7 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useSplitStore, SplitMode } from '../store/splitStore';
 import { FileArchive, FolderOpen, Loader2, UploadCloud, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '../components/ui/card';
+import { DragDropZone } from '../components/DragDropZone';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
@@ -27,7 +28,6 @@ export function SplitPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pageInputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [pageError, setPageError] = useState<string>('');
 
@@ -38,7 +38,7 @@ export function SplitPage() {
     }
   }, [mode, file, result]);
 
-  const handleFile = (selectedFile: File) => {
+  const handleFileSelect = (selectedFile: File) => {
     if (selectedFile.type !== 'application/pdf' && !selectedFile.name.toLowerCase().endsWith('.pdf')) {
       toast.error('Mohon hanya pilih file PDF.');
       return;
@@ -47,36 +47,6 @@ export function SplitPage() {
     setResult(null);
     setTotalPages(0);
     setPageError('');
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleFile(e.target.files[0]);
-    }
-  };
-
-  // UX: Event handler untuk Drag and Drop
-  const onDragEnter = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const onDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFile(e.dataTransfer.files[0]);
-    }
   };
 
   const handleRemoveFile = () => {
@@ -189,28 +159,17 @@ export function SplitPage() {
                 type="file"
                 accept=".pdf,application/pdf"
                 ref={fileInputRef}
-                onChange={handleFileChange}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length > 0) {
+                    handleFileSelect(e.target.files[0]);
+                  }
+                }}
                 className="hidden"
               />
             </div>
 
             {!file ? (
-              <div 
-                className={`flex flex-col items-center justify-center h-72 border-2 border-dashed rounded-2xl transition-colors cursor-pointer shadow-sm ${
-                  isDragging ? 'border-teal-500 bg-teal-50 text-teal-600' : 'border-slate-300 bg-white text-slate-400 hover:border-teal-400 hover:bg-teal-50'
-                }`}
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={onDragOver}
-                onDragEnter={onDragEnter}
-                onDragLeave={onDragLeave}
-                onDrop={onDrop}
-              >
-                <div className={`p-4 rounded-full mb-4 ${isDragging ? 'bg-teal-100' : 'bg-slate-100'}`}>
-                  <UploadCloud size={40} />
-                </div>
-                <h3 className="text-lg font-bold text-slate-800 mb-1">Pilih atau Tarik File PDF</h3>
-                <p className="text-sm text-slate-500">Jatuhkan file di sini untuk mulai memisahkan</p>
-              </div>
+              <DragDropZone onFileSelect={handleFileSelect} className="h-72" />
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in slide-in-from-bottom-4 duration-500">
                 {/* Kolom Kiri: Preview */}
