@@ -22,6 +22,18 @@ export function SplitPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pageInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+
+  // Buat URL Blob untuk preview PDF
+  useEffect(() => {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPdfUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPdfUrl(null);
+    }
+  }, [file]);
 
   // UX: Auto-focus input saat mode berpindah ke 'extract'
   useEffect(() => {
@@ -166,9 +178,23 @@ export function SplitPage() {
               ) : (
                 <div className="bg-white border border-slate-200 rounded-md p-6 shadow-sm">
                   {/* File Info Preview */}
-                  <div className="mb-6">
+                  <div className="mb-4">
                     <ThumbnailPreview file={file} onClear={handleRemoveFile} />
                   </div>
+
+                  {/* Real PDF Preview */}
+                  {pdfUrl && (
+                    <div className="mb-6 rounded-md overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center relative" style={{ height: '300px' }}>
+                      <iframe 
+                        src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} 
+                        width="100%" 
+                        height="100%" 
+                        title="PDF Preview" 
+                        className="border-0"
+                      />
+                      {/* Overlay transparan agar iframe tidak memblokir event drag&drop/klik kalau diperlukan */}
+                    </div>
+                  )}
 
                   <div className="mb-6">
                     <h4 className="text-sm font-semibold text-slate-800 mb-3">Mode Pemecahan</h4>
