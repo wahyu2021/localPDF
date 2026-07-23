@@ -114,6 +114,13 @@ export function CompressPage() {
               <div>
                 <h3 className="text-sm font-semibold text-slate-800">Pilih File PDF</h3>
               </div>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded hover:bg-teal-100 flex items-center gap-2 transition-colors"
+              >
+                <UploadCloud size={16} />
+                Pilih File PDF
+              </button>
             </div>
             <div className="p-4 bg-slate-50 min-h-[300px] flex items-center justify-center">
               <DragDropZone onFileSelect={setFile} className="h-64" />
