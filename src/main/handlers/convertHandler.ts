@@ -59,7 +59,7 @@ export async function handleConvertPdf(
         // Ghostscript render ke JPEG
         // gswin64c -dSAFER -dBATCH -dNOPAUSE -r300 -sDEVICE=jpeg -dJPEGQ=90 -sOutputFile="out/page-%03d.jpg" input.pdf
         const outputPattern = path.join(outputDirectory, `${parsedPath.name}_page-%03d.jpg`);
-        await runEngine('gswin64c.exe', [
+        await runEngine('gs/bin/gswin64c.exe', [
           '-dSAFER',
           '-dBATCH',
           '-dNOPAUSE',
