@@ -4,11 +4,11 @@ import { resolve } from 'path'
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()],
+    plugins: [externalizeDepsPlugin({ exclude: ['execa', 'nanoid'] })],
     build: {
       outDir: 'dist/main',
       rollupOptions: {
-        external: ['electron', 'path', 'fs', 'child_process', 'crypto', 'os', 'execa', 'electron-log'],
+        external: ['electron', 'path', 'fs', 'child_process', 'crypto', 'os', 'electron-log'],
         input: {
           index: resolve(__dirname, 'src/main/index.ts')
         },
@@ -22,11 +22,11 @@ export default defineConfig({
     }
   },
   preload: {
-    plugins: [externalizeDepsPlugin()],
+    plugins: [externalizeDepsPlugin({ exclude: ['execa', 'nanoid'] })],
     build: {
       outDir: 'dist/preload',
       rollupOptions: {
-        external: ['electron', 'path', 'fs', 'child_process', 'crypto', 'os', 'execa', 'electron-log'],
+        external: ['electron', 'path', 'fs', 'child_process', 'crypto', 'os', 'electron-log'],
         input: {
           index: resolve(__dirname, 'src/preload/index.ts')
         },
