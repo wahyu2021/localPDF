@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { DragDropZone } from '../components/DragDropZone';
 import { ThumbnailPreview } from '../components/ThumbnailPreview';
 import { PDFCanvasPreview } from '../components/PDFCanvasPreview';
@@ -18,6 +18,19 @@ function formatBytes(bytes: number, decimals = 2) {
 
 export function CompressPage() {
   const { file, filePath, setFile, quality, customDpi, isProcessing, setIsProcessing, compressedResult, setCompressedResult, reset } = useCompressStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0];
+      if (selectedFile.type === 'application/pdf' || selectedFile.name.toLowerCase().endsWith('.pdf')) {
+        const path = window.api?.getFilePath ? window.api.getFilePath(selectedFile) : ((selectedFile as any).path || '');
+        setFile(selectedFile, path);
+      } else {
+        toast.error('Mohon hanya pilih file PDF.');
+      }
+    }
+  };
 
   const handleCompress = async () => {
     if (!file || !filePath) {
@@ -116,12 +129,19 @@ export function CompressPage() {
                 <h3 className="text-sm font-semibold text-slate-800">Pengaturan Kompresi</h3>
               </div>
               <button
-                onClick={reset}
+                onClick={() => fileInputRef.current?.click()}
                 className="px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded hover:bg-teal-100 flex items-center gap-2 transition-colors"
               >
                 <UploadCloud size={16} />
                 Ganti File
               </button>
+              <input
+                type="file"
+                accept="application/pdf"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+              />
             </div>
 
             <div className="p-4 bg-slate-50 min-h-[300px]">
