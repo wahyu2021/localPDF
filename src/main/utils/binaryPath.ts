@@ -17,6 +17,12 @@ export function getBinaryPath(binaryName: string): string {
   // Karena saat ini fokus rilis untuk Windows
   const platformFolder = 'win';
   
-  // binaryName di sini bisa berupa path bersarang, misal "qpdf/qpdf.exe"
+  // Di production, electron-builder (extraResources) telah menghilangkan folder 'win' 
+  // karena parameter "from: binaries/${os}/" to "binaries/"
+  if (isProd) {
+    return path.join(rootDir, 'binaries', binaryName);
+  }
+  
+  // Di development, tetap gunakan platform folder karena path aslinya ada di sana
   return path.join(rootDir, 'binaries', platformFolder, binaryName);
 }
