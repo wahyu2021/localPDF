@@ -8,7 +8,6 @@ import { Label } from '../components/ui/label';
 import { toast } from 'sonner';
 import { DragDropZone } from '../components/DragDropZone';
 import { ThumbnailPreview } from '../components/ThumbnailPreview';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 
 export function SecurityPage() {
   const { 
@@ -273,44 +272,41 @@ export function SecurityPage() {
                     
                     <div className="space-y-2 mt-4">
                       <Label>Hak Akses Mencetak (Print)</Label>
-                      <Select value={restrictions.print} onValueChange={(v: any) => setRestrictions({ print: v })}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih hak akses cetak" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">Tidak Diizinkan (None)</SelectItem>
-                          <SelectItem value="low">Kualitas Rendah (Low)</SelectItem>
-                          <SelectItem value="full">Kualitas Penuh (Full)</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <select 
+                        className="w-full flex h-10 items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={restrictions.print} 
+                        onChange={(e) => setRestrictions({ print: e.target.value as any })}
+                      >
+                        <option value="none">Tidak Diizinkan (None)</option>
+                        <option value="low">Kualitas Rendah (Low)</option>
+                        <option value="full">Kualitas Penuh (Full)</option>
+                      </select>
                     </div>
                     
-                    <div className="space-y-2 mt-2">
+                    <div className="space-y-2 mt-4">
                       <Label>Hak Akses Edit (Modify)</Label>
-                      <Select value={restrictions.modify} onValueChange={(v: any) => setRestrictions({ modify: v })}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih hak akses edit" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">Tidak Diizinkan (None)</SelectItem>
-                          <SelectItem value="annotate">Hanya Anotasi</SelectItem>
-                          <SelectItem value="form">Hanya Isi Form</SelectItem>
-                          <SelectItem value="all">Semua Diizinkan</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <select 
+                        className="w-full flex h-10 items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={restrictions.modify} 
+                        onChange={(e) => setRestrictions({ modify: e.target.value as any })}
+                      >
+                        <option value="none">Tidak Diizinkan (None)</option>
+                        <option value="annotate">Hanya Anotasi</option>
+                        <option value="form">Hanya Isi Form</option>
+                        <option value="all">Semua Diizinkan</option>
+                      </select>
                     </div>
 
-                    <div className="space-y-2 mt-2">
+                    <div className="space-y-2 mt-4">
                       <Label>Izinkan Copy (Extract)</Label>
-                      <Select value={restrictions.extract} onValueChange={(v: any) => setRestrictions({ extract: v })}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Izinkan salin teks/gambar" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="n">Tidak Diizinkan (No)</SelectItem>
-                          <SelectItem value="y">Diizinkan (Yes)</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <select 
+                        className="w-full flex h-10 items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        value={restrictions.extract} 
+                        onChange={(e) => setRestrictions({ extract: e.target.value as any })}
+                      >
+                        <option value="n">Tidak Diizinkan (No)</option>
+                        <option value="y">Diizinkan (Yes)</option>
+                      </select>
                     </div>
                   </>
                 )}
