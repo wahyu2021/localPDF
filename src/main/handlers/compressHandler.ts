@@ -32,7 +32,6 @@ export function registerCompressHandler(mainWindow: BrowserWindow) {
         '-sDEVICE=pdfwrite',
         '-dCompatibilityLevel=1.4',
         '-dNOPAUSE',
-        '-dQUIET',
         '-dBATCH',
       ];
 
