@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { FileText, X, UploadCloud, GripVertical, Save, Loader2 } from 'lucide-react';
+import { FileText, X, UploadCloud, GripVertical, Save, Loader2, Layers } from 'lucide-react';
 import { useMergeStore } from '../store/mergeStore';
 import { cn } from '../utils/cn';
 
