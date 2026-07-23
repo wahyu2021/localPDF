@@ -216,7 +216,7 @@ export function MergePage() {
                     </span>
                   </CardHeader>
                   
-                  <CardContent className="flex-1 overflow-y-auto pr-2 -mr-2 space-y-3">
+                  <CardContent className="flex-1 overflow-y-auto mr-2 space-y-3">
                     {files.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-slate-400 min-h-[200px] border-2 border-dashed border-slate-200 rounded-xl">
                         <Layers size={32} className="mb-2 text-slate-300" />

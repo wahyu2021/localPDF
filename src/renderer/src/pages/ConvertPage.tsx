@@ -150,7 +150,7 @@ export function ConvertPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full px-6">
         {/* Office to PDF */}
         <Card 
-          className="group cursor-pointer hover:border-teal-400 hover:shadow-md transition-colors duration-200 bg-white"
+          className="group cursor-pointer hover:border-teal-400 hover:shadow-md transition-colors duration-200 bg-white border-slate-200"
           onClick={() => setMode('office-to-pdf')}
         >
           <CardContent className="flex flex-col items-center p-8 text-center">
@@ -166,7 +166,7 @@ export function ConvertPage() {
 
         {/* Image to PDF */}
         <Card 
-          className="group cursor-pointer hover:border-blue-400 hover:shadow-md transition-colors duration-200 bg-white"
+          className="group cursor-pointer hover:border-blue-400 hover:shadow-md transition-colors duration-200 bg-white border-slate-200"
           onClick={() => setMode('image-to-pdf')}
         >
           <CardContent className="flex flex-col items-center p-8 text-center">
@@ -182,7 +182,7 @@ export function ConvertPage() {
 
         {/* PDF to Image */}
         <Card 
-          className="group cursor-pointer hover:border-orange-400 hover:shadow-md transition-colors duration-200 bg-white"
+          className="group cursor-pointer hover:border-orange-400 hover:shadow-md transition-colors duration-200 bg-white border-slate-200"
           onClick={() => setMode('pdf-to-image')}
         >
           <CardContent className="flex flex-col items-center p-8 text-center">
