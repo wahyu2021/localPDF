@@ -3,12 +3,10 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { Loader2 } from 'lucide-react';
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-// Setup worker for vite
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+// Setup worker for vite secara offline & memastikan versi cocok
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 interface PDFCanvasPreviewProps {
   file: File;
