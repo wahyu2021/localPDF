@@ -60,12 +60,10 @@ export function SecurityPage() {
     setIsProcessing(true);
 
     try {
-      const outputDir = window.api.getTempFolder();
       const filePath = window.api.getFilePath(file);
       
       const result = await window.api.securityPdf({
         filePath,
-        outputDirectory: outputDir,
         mode,
         userPassword,
         ownerPassword,
@@ -118,7 +116,7 @@ export function SecurityPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card 
-            className="group cursor-pointer hover:border-teal-400 hover:shadow-md transition-colors duration-200 bg-white"
+            className="group cursor-pointer border-slate-200 hover:border-teal-400 hover:shadow-md transition-colors duration-200 bg-white"
             onClick={() => setMode('lock')}
           >
             <CardContent className="flex flex-col items-center p-8 text-center">
@@ -133,7 +131,7 @@ export function SecurityPage() {
           </Card>
 
           <Card 
-            className="group cursor-pointer hover:border-blue-400 hover:shadow-md transition-colors duration-200 bg-white"
+            className="group cursor-pointer border-slate-200 hover:border-blue-400 hover:shadow-md transition-colors duration-200 bg-white"
             onClick={() => setMode('unlock')}
           >
             <CardContent className="flex flex-col items-center p-8 text-center">
@@ -148,7 +146,7 @@ export function SecurityPage() {
           </Card>
 
           <Card 
-            className="group cursor-pointer hover:border-orange-400 hover:shadow-md transition-colors duration-200 bg-white"
+            className="group cursor-pointer border-slate-200 hover:border-orange-400 hover:shadow-md transition-colors duration-200 bg-white"
             onClick={() => setMode('restrict')}
           >
             <CardContent className="flex flex-col items-center p-8 text-center">
@@ -315,17 +313,22 @@ export function SecurityPage() {
             </Card>
 
             <Button 
-              className="w-full h-12 text-md font-bold shadow-sm"
+              className="w-full h-14 text-lg font-bold shadow-md bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
               onClick={handleExecute}
               disabled={isProcessing || !file}
             >
               {isProcessing ? (
                 <>
-                  <Loader2 size={18} className="animate-spin mr-2" />
-                  Memproses...
+                  <Loader2 size={22} className="animate-spin mr-2" />
+                  Sedang Memproses...
                 </>
               ) : (
-                'Eksekusi'
+                <>
+                  {mode === 'lock' && <Lock size={20} className="mr-2" />}
+                  {mode === 'unlock' && <Unlock size={20} className="mr-2" />}
+                  {mode === 'restrict' && <ShieldAlert size={20} className="mr-2" />}
+                  Mulai Eksekusi
+                </>
               )}
             </Button>
           </div>

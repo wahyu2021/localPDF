@@ -4,6 +4,7 @@ import fs from 'fs';
 import { IPC_CHANNELS } from '../../shared/ipc-channels';
 import { SecurityPayload, SecurityResult } from '../../shared/ipc-types';
 import { runEngine } from '../engines/engineRunner';
+import { generateTaskId, getOutputPath } from '../utils/tempFileManager';
 import log from 'electron-log';
 
 /**
@@ -11,17 +12,18 @@ import log from 'electron-log';
  */
 export function registerSecurityHandler(mainWindow: BrowserWindow) {
   ipcMain.handle(IPC_CHANNELS.SECURITY_PDF, async (event, payload: SecurityPayload): Promise<SecurityResult> => {
-    const { filePath, outputDirectory, mode, userPassword, ownerPassword, restrictions } = payload;
+    const { filePath, mode, userPassword, ownerPassword, restrictions } = payload;
     
     try {
       const parsedPath = path.parse(filePath);
+      const taskId = generateTaskId();
       let outputFileName = '';
       const qpdfArgs: string[] = [];
       const qpdfPath = 'qpdf/qpdf.exe'; // Relatif ke folder binaries/win
       
       if (mode === 'lock') {
         outputFileName = `${parsedPath.name}_locked.pdf`;
-        const outPath = path.join(outputDirectory, outputFileName);
+        const outPath = getOutputPath(outputFileName, taskId);
         
         // Command: qpdf --encrypt user_pw owner_pw 256 -- input.pdf output.pdf
         const uPw = userPassword || '';
@@ -31,7 +33,7 @@ export function registerSecurityHandler(mainWindow: BrowserWindow) {
         
       } else if (mode === 'unlock') {
         outputFileName = `${parsedPath.name}_unlocked.pdf`;
-        const outPath = path.join(outputDirectory, outputFileName);
+        const outPath = getOutputPath(outputFileName, taskId);
         
         // Command: qpdf --decrypt --password=user_pw input.pdf output.pdf
         const pw = userPassword || ownerPassword || '';
@@ -39,7 +41,7 @@ export function registerSecurityHandler(mainWindow: BrowserWindow) {
         
       } else if (mode === 'restrict') {
         outputFileName = `${parsedPath.name}_restricted.pdf`;
-        const outPath = path.join(outputDirectory, outputFileName);
+        const outPath = getOutputPath(outputFileName, taskId);
         
         // Command: qpdf --encrypt user_pw owner_pw 256 --[restrictions] -- input.pdf output.pdf
         const uPw = userPassword || '';
@@ -62,7 +64,7 @@ export function registerSecurityHandler(mainWindow: BrowserWindow) {
         throw new Error(`Mode tidak dikenal: ${mode}`);
       }
 
-      const outPath = path.join(outputDirectory, outputFileName);
+      const outPath = getOutputPath(outputFileName, taskId);
       log.info(`[SecurityHandler] Menjalankan mode: ${mode} untuk ${parsedPath.base}`);
       
       const result = await runEngine(qpdfPath, qpdfArgs);

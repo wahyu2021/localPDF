@@ -70,7 +70,7 @@ export interface ConvertResult {
 
 export interface SecurityPayload {
   filePath: string;
-  outputDirectory: string;
+  outputDirectory?: string;
   mode: 'lock' | 'unlock' | 'restrict';
   userPassword?: string;
   ownerPassword?: string;
