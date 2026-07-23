@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useSplitStore, SplitMode } from '../store/splitStore';
 import { FolderOpen, Scissors, File as FileIcon, X, CheckCircle2, UploadCloud, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -19,22 +19,60 @@ export function SplitPage() {
   } = useSplitStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const pageInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // UX: Auto-focus input saat mode berpindah ke 'extract'
+  useEffect(() => {
+    if (mode === 'extract' && file && !result && pageInputRef.current) {
+      pageInputRef.current.focus();
+    }
+  }, [mode, file, result]);
+
+  const handleFile = (selectedFile: File) => {
+    if (selectedFile.type !== 'application/pdf' && !selectedFile.name.toLowerCase().endsWith('.pdf')) {
+      toast.error('Mohon hanya pilih file PDF.');
+      return;
+    }
+    setFile(selectedFile);
+    setResult(null);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      if (selectedFile.type !== 'application/pdf' && !selectedFile.name.toLowerCase().endsWith('.pdf')) {
-        toast.error('Mohon hanya pilih file PDF.');
-        return;
-      }
-      setFile(selectedFile);
-      setResult(null);
+      handleFile(e.target.files[0]);
+    }
+  };
+
+  // UX: Event handler untuk Drag and Drop
+  const onDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const onDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFile(e.dataTransfer.files[0]);
     }
   };
 
   const handleRemoveFile = () => {
     setFile(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // UX: Validasi Real-time input teks
+  const handlePagesInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Hanya mengizinkan angka, koma, spasi, dan strip
+    const val = e.target.value.replace(/[^0-9,\-\s]/g, '');
+    setPagesInput(val);
   };
 
   const handleProcess = async () => {
@@ -46,10 +84,9 @@ export function SplitPage() {
     }
 
     try {
-      // Pilih folder tujuan
       const outputDirectory = await window.api.selectFolder();
       if (!outputDirectory) {
-        return; // User canceled
+        return; 
       }
       
       setIsProcessing(true);
@@ -87,7 +124,6 @@ export function SplitPage() {
     <div className="w-full max-w-4xl mx-auto">
       <div className="space-y-6">
         
-        {/* VIEW 1: Input & Configuration */}
         {!result ? (
           <div className="bg-white border border-slate-300 rounded-md overflow-hidden">
             <div className="p-4 bg-slate-100 border-b border-slate-300 flex justify-between items-center">
@@ -115,15 +151,19 @@ export function SplitPage() {
             <div className="p-4 bg-slate-50 min-h-[300px]">
               {!file ? (
                 <div 
-                  className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-slate-300 rounded-md bg-white text-slate-400 hover:border-teal-400 hover:bg-teal-50 transition-colors cursor-pointer"
+                  className={`flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-md transition-colors cursor-pointer ${
+                    isDragging ? 'border-teal-500 bg-teal-50 text-teal-600' : 'border-slate-300 bg-white text-slate-400 hover:border-teal-400 hover:bg-teal-50'
+                  }`}
                   onClick={() => fileInputRef.current?.click()}
+                  onDragOver={onDragOver}
+                  onDragLeave={onDragLeave}
+                  onDrop={onDrop}
                 >
                   <UploadCloud size={40} className="mb-3" />
                   <p className="text-sm font-medium">Klik atau drop file ke sini</p>
                 </div>
               ) : (
                 <div className="bg-white border border-slate-200 rounded-md p-6 shadow-sm">
-                  {/* File Info */}
                   <div className="flex items-center justify-between bg-slate-50 p-4 rounded border border-slate-200 mb-6">
                     <div className="flex items-center gap-3 overflow-hidden">
                       <FileIcon size={24} className="text-teal-600 flex-shrink-0" />
@@ -140,7 +180,6 @@ export function SplitPage() {
                     </button>
                   </div>
 
-                  {/* Mode Selector */}
                   <div className="mb-6">
                     <h4 className="text-sm font-semibold text-slate-800 mb-3">Mode Pemecahan</h4>
                     <div className="flex gap-4">
@@ -175,15 +214,15 @@ export function SplitPage() {
                     </div>
                   </div>
 
-                  {/* Range Input */}
                   {mode === 'extract' && (
                     <div className="mb-2">
                       <label htmlFor="pagesInput" className="block text-sm font-semibold text-slate-800 mb-2">Rentang Halaman</label>
                       <input
                         id="pagesInput"
+                        ref={pageInputRef}
                         type="text"
                         value={pagesInput}
-                        onChange={(e) => setPagesInput(e.target.value)}
+                        onChange={handlePagesInputChange}
                         placeholder="Contoh: 1-3, 5, 7-10"
                         className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-shadow"
                       />
@@ -193,7 +232,6 @@ export function SplitPage() {
               )}
             </div>
 
-            {/* Bottom Actions */}
             <div className="p-4 border-t border-slate-300 bg-white flex justify-end gap-3">
               {file && (
                 <button
@@ -225,7 +263,6 @@ export function SplitPage() {
           </div>
         ) : (
           
-          /* VIEW 2: Result */
           <div className="bg-white border border-slate-300 rounded-md overflow-hidden shadow-sm">
             <div className="p-4 bg-slate-100 border-b border-slate-300">
               <h3 className="text-sm font-semibold text-slate-800">Hasil Pemecahan PDF</h3>
