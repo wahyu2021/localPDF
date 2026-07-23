@@ -34,5 +34,5 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ---
 
-- [~] **Track: 008-chore-refactor-pages**
-*Link: [./tracks/008-chore-refactor-pages_20260723/](./tracks/008-chore-refactor-pages_20260723/)*
+## [x] Track: 008-chore-refactor-pages
+- **Tautan:** [008-chore-refactor-pages](archive/008-chore-refactor-pages/index.md)

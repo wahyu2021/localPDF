@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Toaster } from 'sonner';
-import { CompressPage } from './pages/CompressPage';
-import { MergePage } from './pages/MergePage';
-import { SplitPage } from './pages/SplitPage';
-import { ConvertPage } from './pages/ConvertPage';
-import { SecurityPage } from './pages/SecurityPage';
+import { CompressPage } from './pages/Compress';
+import { MergePage } from './pages/Merge';
+import { SplitPage } from './pages/Split';
+import { ConvertPage } from './pages/Convert';
+import { SecurityPage } from './pages/Security';
 import { FileDown, Layers, SplitSquareHorizontal, FileArchive, Lock, Unlock } from 'lucide-react';
 import { cn } from './utils/cn';
 import logo from './assets/logo.png';

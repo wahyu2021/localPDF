@@ -1,23 +1,24 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useConvertStore, ConvertMode } from '../store/convertStore';
-import { Loader2, UploadCloud, X, ArrowRight, FileText, Image as ImageIcon, FileSpreadsheet, ArrowLeft } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Loader2, UploadCloud, X, ArrowRight, FileText, Image as ImageIcon, FileSpreadsheet } from 'lucide-react';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { toast } from 'sonner';
+import { useConvertStore } from '../../store/convertStore';
+import { FeatureLayout } from '../../components/FeatureLayout';
+import { ConvertModeCards } from './components/ConvertModeCards';
+
+const formatSize = (bytes: number) => {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
 
 export function ConvertPage() {
   const {
-    files,
-    mode,
-    isProcessing,
-    result,
-    setFiles,
-    addFiles,
-    removeFile,
-    setMode,
-    setIsProcessing,
-    setResult,
-    reset,
+    files, mode, isProcessing, result,
+    setFiles, addFiles, removeFile, setMode, setIsProcessing, setResult, reset,
   } = useConvertStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -26,7 +27,7 @@ export function ConvertPage() {
   useEffect(() => {
     if (!window.api) return;
     const unsubscribe = window.api.onProgressUpdate((data) => {
-      // Progress UI
+      // Handle UI progress updates here if needed
     });
     return () => unsubscribe();
   }, []);
@@ -66,13 +67,10 @@ export function ConvertPage() {
     return [];
   };
 
-  const getAcceptString = () => {
-    return getAcceptedExtensions().join(',');
-  };
+  const getAcceptString = () => getAcceptedExtensions().join(',');
 
   const processFiles = (selectedFiles: File[]) => {
     const validExtensions = getAcceptedExtensions();
-    
     const validFiles = selectedFiles.filter(file => {
       const name = file.name.toLowerCase();
       return validExtensions.some(ext => name.endsWith(ext));
@@ -102,14 +100,7 @@ export function ConvertPage() {
       toast.loading('Sedang memproses konversi...', { id: 'convert-progress' });
 
       const filePaths = files.map(f => window.api.getFilePath(f)).filter(p => p !== '');
-
-      const payload = {
-        filePaths,
-        mode,
-        outputDirectory
-      };
-
-      const res = await window.api.convertPdf(payload);
+      const res = await window.api.convertPdf({ filePaths, mode, outputDirectory });
 
       if (res.success) {
         setResult(res);
@@ -130,77 +121,8 @@ export function ConvertPage() {
     }
   };
 
-  const formatSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  const renderModeSelection = () => (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] animate-in fade-in duration-500">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">Pilih Alat Konversi</h1>
-        <p className="text-slate-500 mt-3 text-lg max-w-xl mx-auto">
-          Apa yang ingin Anda lakukan hari ini? Pilih salah satu mode di bawah ini.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full px-6">
-        {/* Office to PDF */}
-        <Card 
-          className="group cursor-pointer hover:border-teal-400 hover:shadow-md transition-colors duration-200 bg-white border-slate-200"
-          onClick={() => setMode('office-to-pdf')}
-        >
-          <CardContent className="flex flex-col items-center p-8 text-center">
-            <div className="bg-teal-50 p-4 rounded-2xl group-hover:bg-teal-100 transition-colors mb-6">
-              <FileSpreadsheet size={48} className="text-teal-600" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">Office ke PDF</h3>
-            <p className="text-slate-500 text-sm">
-              Ubah dokumen Word, Excel, dan PowerPoint Anda menjadi PDF murni dengan akurasi tinggi.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Image to PDF */}
-        <Card 
-          className="group cursor-pointer hover:border-blue-400 hover:shadow-md transition-colors duration-200 bg-white border-slate-200"
-          onClick={() => setMode('image-to-pdf')}
-        >
-          <CardContent className="flex flex-col items-center p-8 text-center">
-            <div className="bg-blue-50 p-4 rounded-2xl group-hover:bg-blue-100 transition-colors mb-6">
-              <ImageIcon size={48} className="text-blue-600" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">Gambar ke PDF</h3>
-            <p className="text-slate-500 text-sm">
-              Gabungkan kumpulan gambar JPG dan PNG menjadi satu atau beberapa file PDF.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* PDF to Image */}
-        <Card 
-          className="group cursor-pointer hover:border-orange-400 hover:shadow-md transition-colors duration-200 bg-white border-slate-200"
-          onClick={() => setMode('pdf-to-image')}
-        >
-          <CardContent className="flex flex-col items-center p-8 text-center">
-            <div className="bg-orange-50 p-4 rounded-2xl group-hover:bg-orange-100 transition-colors mb-6">
-              <FileText size={48} className="text-orange-600" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">PDF ke Gambar</h3>
-            <p className="text-slate-500 text-sm">
-              Ekstrak setiap halaman dari dokumen PDF Anda menjadi file gambar JPG berkualitas tinggi.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-
   if (!mode) {
-    return renderModeSelection();
+    return <ConvertModeCards />;
   }
 
   const modeTitles = {
@@ -216,24 +138,13 @@ export function ConvertPage() {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-8 px-6 animate-in fade-in duration-300">
+    <FeatureLayout 
+      title={modeTitles[mode]} 
+      description={modeDescriptions[mode]}
+      onBack={reset} 
+      maxWidth="7xl"
+    >
       
-      {/* Tombol Kembali & Judul */}
-      <div className="flex items-center mb-8 pb-4 border-b border-slate-200">
-        <Button 
-          variant="ghost" 
-          onClick={reset} 
-          className="mr-4 text-slate-500 hover:text-slate-800 hover:bg-slate-100"
-        >
-          <ArrowLeft size={20} className="mr-2" />
-          Kembali
-        </Button>
-        <div>
-          <h2 className="text-2xl font-bold text-slate-800">{modeTitles[mode]}</h2>
-          <p className="text-sm text-slate-500 mt-1">{modeDescriptions[mode]}</p>
-        </div>
-      </div>
-
       {files.length === 0 ? (
         <div className="flex flex-col items-center justify-center mt-12">
           <Card 
@@ -263,7 +174,6 @@ export function ConvertPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Daftar File */}
           <div className="lg:col-span-8 flex flex-col space-y-6">
             <Card className="shadow-sm border-slate-200 flex-1 flex flex-col min-h-[400px]">
               <CardHeader className="bg-slate-50 border-b border-slate-100 py-4 flex flex-row items-center justify-between">
@@ -310,7 +220,6 @@ export function ConvertPage() {
             </Card>
           </div>
 
-          {/* Kolom Kanan: Aksi Konversi */}
           <div className="lg:col-span-4 flex flex-col space-y-6">
             <Card className="shadow-md border-slate-200 sticky top-6">
               <CardHeader className="pb-4 border-b border-slate-100 bg-slate-50/50">
@@ -374,7 +283,6 @@ export function ConvertPage() {
         </div>
       )}
 
-      {/* Hidden input for file selection */}
       <input
         type="file"
         multiple
@@ -383,6 +291,6 @@ export function ConvertPage() {
         onChange={handleFileSelect}
         accept={getAcceptString()}
       />
-    </div>
+    </FeatureLayout>
   );
 }
