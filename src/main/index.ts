@@ -7,6 +7,7 @@ import { IPC_CHANNELS } from '../shared/ipc-channels';
 import { registerSplitHandler } from './handlers/splitHandler';
 import { registerConvertHandler } from './handlers/convertHandler';
 import { registerSecurityHandler } from './handlers/securityHandler';
+import { registerPdfToWordHandler } from './handlers/pdfToWordHandler';
 
 app.whenReady().then(() => {
   // Siapkan folder temporer
@@ -25,6 +26,7 @@ app.whenReady().then(() => {
   registerSplitHandler(mainWindow);
   registerConvertHandler(mainWindow);
   registerSecurityHandler(mainWindow);
+  registerPdfToWordHandler(mainWindow);
 
   app.on('activate', () => {
     // Pada macOS biasanya re-create window saat icon di-klik
@@ -35,6 +37,7 @@ app.whenReady().then(() => {
       registerSplitHandler(newWin);
       registerConvertHandler(newWin);
       registerSecurityHandler(newWin);
+      registerPdfToWordHandler(newWin);
     }
   });
 });

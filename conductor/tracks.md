@@ -39,5 +39,5 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ---
 
-- [ ] **Track: PDF ke Word**
+- [~] **Track: PDF ke Word**
 *Link: [./tracks/pdf-to-word_20260723/](./tracks/pdf-to-word_20260723/)*

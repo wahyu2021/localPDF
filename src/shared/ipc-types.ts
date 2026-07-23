@@ -87,3 +87,13 @@ export interface SecurityResult {
   outputPath?: string;
   error?: string;
 }
+
+export interface PdfToWordPayload {
+  filePath: string;
+}
+
+export interface PdfToWordResult {
+  success: boolean;
+  tempPath?: string;
+  error?: string;
+}

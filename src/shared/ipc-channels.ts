@@ -10,4 +10,5 @@ export const IPC_CHANNELS = {
   PROGRESS_UPDATE: 'progress-update',
   OPEN_OUTPUT_FOLDER: 'open-output-folder',
   SELECT_FOLDER: 'select-folder',
+  PDF_TO_WORD: 'pdf:to-word',
 } as const;

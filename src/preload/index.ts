@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import { IPC_CHANNELS } from '../shared/ipc-channels';
-import type { CompressPayload, CompressResult, MergePayload, MergeResult, SplitPayload, SplitResult, ConvertPayload, ConvertResult, ProgressUpdateData } from '../shared/ipc-types';
+import type { CompressPayload, CompressResult, MergePayload, MergeResult, SplitPayload, SplitResult, ConvertPayload, ConvertResult, ProgressUpdateData, PdfToWordPayload, PdfToWordResult } from '../shared/ipc-types';
 
 const api = {
   getFilePath: (file: File) => {
@@ -34,6 +34,12 @@ const api = {
     
   savePdf: (payload: { tempPath: string; defaultFileName: string }): Promise<any> =>
     ipcRenderer.invoke(IPC_CHANNELS.SAVE_PDF, payload),
+
+  pdfToWord: (payload: PdfToWordPayload): Promise<PdfToWordResult> =>
+    ipcRenderer.invoke(IPC_CHANNELS.PDF_TO_WORD, payload),
+
+  saveWordFile: (payload: { tempPath: string; defaultFileName: string }): Promise<any> =>
+    ipcRenderer.invoke(`${IPC_CHANNELS.PDF_TO_WORD}:save`, payload),
   
   onProgressUpdate: (callback: (data: ProgressUpdateData) => void) => {
     const handler = (_event: Electron.IpcRendererEvent, data: ProgressUpdateData) => callback(data);
