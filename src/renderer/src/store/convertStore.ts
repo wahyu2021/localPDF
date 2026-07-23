@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type ConvertMode = 'office-to-pdf' | 'image-to-pdf' | 'pdf-to-image';
+export type ConvertMode = 'office-to-pdf' | 'image-to-pdf' | 'pdf-to-image' | null;
 
 interface ConvertState {
   files: File[];
@@ -20,7 +20,7 @@ interface ConvertState {
 
 export const useConvertStore = create<ConvertState>((set) => ({
   files: [],
-  mode: 'office-to-pdf',
+  mode: null,
   isProcessing: false,
   progress: 0,
   result: null,
@@ -33,7 +33,7 @@ export const useConvertStore = create<ConvertState>((set) => ({
   setResult: (result) => set({ result }),
   reset: () => set({
     files: [],
-    mode: 'office-to-pdf',
+    mode: null,
     isProcessing: false,
     progress: 0,
     result: null
