@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useSplitStore, SplitMode } from '../store/splitStore';
 import { FolderOpen, Scissors, File as FileIcon, X, CheckCircle2, UploadCloud, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ThumbnailPreview } from '../components/ThumbnailPreview';
 
 export function SplitPage() {
   const {
@@ -164,20 +165,9 @@ export function SplitPage() {
                 </div>
               ) : (
                 <div className="bg-white border border-slate-200 rounded-md p-6 shadow-sm">
-                  <div className="flex items-center justify-between bg-slate-50 p-4 rounded border border-slate-200 mb-6">
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      <FileIcon size={24} className="text-teal-600 flex-shrink-0" />
-                      <span className="font-medium text-sm text-slate-700 truncate" title={file.name}>
-                        {file.name}
-                      </span>
-                    </div>
-                    <button
-                      onClick={handleRemoveFile}
-                      className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded transition-colors"
-                      title="Hapus File"
-                    >
-                      <X size={18} />
-                    </button>
+                  {/* File Info Preview */}
+                  <div className="mb-6">
+                    <ThumbnailPreview file={file} onClear={handleRemoveFile} />
                   </div>
 
                   <div className="mb-6">
