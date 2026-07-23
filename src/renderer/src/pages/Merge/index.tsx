@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { FileText, X, UploadCloud, GripVertical, Save, Loader2, Layers, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/ui/button';
@@ -9,6 +9,8 @@ import { PDFCanvasPreview } from '../../components/shared/PDFCanvasPreview';
 import { useMergeStore } from '../../store/mergeStore';
 import { cn } from '../../utils/cn';
 import { FeatureLayout } from '../../components/layout/FeatureLayout';
+import { useProgressTracker } from '../../hooks/useProgressTracker';
+import { ProgressBar } from '../../components/shared/ProgressBar';
 
 export function MergePage() {
   const {
@@ -27,35 +29,7 @@ export function MergePage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [timeRemaining, setTimeRemaining] = useState<string>('');
-
-  useEffect(() => {
-    if (!window.api) return;
-    const unsubscribe = window.api.onProgressUpdate((data: any) => {
-      setProgress(data.percent);
-      
-      if (startTime && data.percent > 10 && data.percent < 100) {
-        const elapsed = Date.now() - startTime;
-        const totalEstimated = elapsed / (data.percent / 100);
-        const remainingMs = totalEstimated - elapsed;
-        
-        if (remainingMs > 0) {
-          const remainingSec = Math.ceil(remainingMs / 1000);
-          if (remainingSec > 60) {
-            setTimeRemaining(`~${Math.floor(remainingSec / 60)} mnt ${remainingSec % 60} dtk`);
-          } else {
-            setTimeRemaining(`~${remainingSec} detik lagi`);
-          }
-        }
-      } else if (data.percent > 0 && data.percent <= 10) {
-        setTimeRemaining('Sedang memproses data...');
-      } else if (data.percent === 100) {
-        setTimeRemaining('Selesai!');
-      }
-    });
-    return () => unsubscribe();
-  }, [startTime, setProgress]);
+  const { timeRemaining, startTracking, stopTracking } = useProgressTracker(setProgress);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -115,9 +89,8 @@ export function MergePage() {
 
     try {
       setIsProcessing(true);
-      setStartTime(Date.now());
       setProgress(0);
-      setTimeRemaining('Menghitung estimasi...');
+      startTracking();
       
       const filePaths = files.map(f => f.path);
       const result = await window.api.mergePdf({ filePaths });
@@ -132,7 +105,7 @@ export function MergePage() {
       toast.error(error.message || 'Terjadi kesalahan sistem.');
     } finally {
       setIsProcessing(false);
-      setStartTime(null);
+      stopTracking();
     }
   };
 
@@ -214,23 +187,7 @@ export function MergePage() {
               </Card>
 
               <div className="flex flex-col gap-3">
-                {isProcessing && (
-                  <div className="space-y-2 mb-2 p-4 bg-slate-50 border border-slate-100 rounded-lg">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="font-medium text-slate-700">Progres Penggabungan</span>
-                      <span className="font-bold text-teal-600">{progress}%</span>
-                    </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
-                      <div 
-                        className="bg-teal-600 h-2.5 rounded-full transition-all duration-300 ease-out"
-                        style={{ width: `${progress}%` }}
-                      ></div>
-                    </div>
-                    <div className="text-xs text-slate-500 text-right mt-1 font-medium">
-                      {timeRemaining}
-                    </div>
-                  </div>
-                )}
+                {isProcessing && <ProgressBar progress={progress} timeRemaining={timeRemaining} label="Progres Penggabungan" />}
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
