@@ -4,6 +4,8 @@ import { registerCompressHandler } from './handlers/compressHandler';
 import { registerMergeHandler } from './handlers/mergeHandler';
 import { initTempFolders, cleanupTempFolders } from './utils/tempFileManager';
 
+import { registerSplitHandler } from './handlers/splitHandler';
+
 app.whenReady().then(() => {
   // Siapkan folder temporer
   initTempFolders();
@@ -13,6 +15,7 @@ app.whenReady().then(() => {
   // Daftarkan semua IPC Handlers di sini
   registerCompressHandler(mainWindow);
   registerMergeHandler(mainWindow);
+  registerSplitHandler(mainWindow);
 
   app.on('activate', () => {
     // Pada macOS biasanya re-create window saat icon di-klik
@@ -20,6 +23,7 @@ app.whenReady().then(() => {
       const newWin = createMainWindow();
       registerCompressHandler(newWin);
       registerMergeHandler(newWin);
+      registerSplitHandler(newWin);
     }
   });
 });
