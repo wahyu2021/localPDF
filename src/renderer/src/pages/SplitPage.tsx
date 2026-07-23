@@ -3,6 +3,7 @@ import { useSplitStore, SplitMode } from '../store/splitStore';
 import { FolderOpen, Scissors, File as FileIcon, X, CheckCircle2, UploadCloud, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ThumbnailPreview } from '../components/ThumbnailPreview';
+import { PDFCanvasPreview } from '../components/PDFCanvasPreview';
 
 export function SplitPage() {
   const {
@@ -166,8 +167,13 @@ export function SplitPage() {
               ) : (
                 <div className="bg-white border border-slate-200 rounded-md p-6 shadow-sm">
                   {/* File Info Preview */}
-                  <div className="mb-6">
+                  <div className="mb-4">
                     <ThumbnailPreview file={file} onClear={handleRemoveFile} />
+                  </div>
+
+                  {/* Real PDF Canvas Preview */}
+                  <div className="mb-6">
+                    <PDFCanvasPreview file={file} />
                   </div>
 
                   <div className="mb-6">
