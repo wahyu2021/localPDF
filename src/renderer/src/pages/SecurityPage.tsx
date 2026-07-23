@@ -273,7 +273,7 @@ export function SecurityPage() {
                     <div className="space-y-2 mt-4">
                       <Label>Hak Akses Mencetak (Print)</Label>
                       <select 
-                        className="w-full flex h-10 items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-9 w-full rounded-md border border-slate-200 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-teal-500 disabled:cursor-not-allowed disabled:opacity-50"
                         value={restrictions.print} 
                         onChange={(e) => setRestrictions({ print: e.target.value as any })}
                       >
@@ -286,7 +286,7 @@ export function SecurityPage() {
                     <div className="space-y-2 mt-4">
                       <Label>Hak Akses Edit (Modify)</Label>
                       <select 
-                        className="w-full flex h-10 items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-9 w-full rounded-md border border-slate-200 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-teal-500 disabled:cursor-not-allowed disabled:opacity-50"
                         value={restrictions.modify} 
                         onChange={(e) => setRestrictions({ modify: e.target.value as any })}
                       >
@@ -300,7 +300,7 @@ export function SecurityPage() {
                     <div className="space-y-2 mt-4">
                       <Label>Izinkan Copy (Extract)</Label>
                       <select 
-                        className="w-full flex h-10 items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-9 w-full rounded-md border border-slate-200 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-teal-500 disabled:cursor-not-allowed disabled:opacity-50"
                         value={restrictions.extract} 
                         onChange={(e) => setRestrictions({ extract: e.target.value as any })}
                       >
