@@ -127,7 +127,7 @@ export function SplitPage() {
       <div className="space-y-6">
         
         {!result ? (
-          <div className="bg-white border border-slate-300 rounded-md overflow-hidden">
+          <div className="bg-white border border-slate-300 rounded-md overflow-hidden shadow-sm">
             <div className="p-4 bg-slate-100 border-b border-slate-300 flex justify-between items-center">
               <div>
                 <h3 className="text-sm font-semibold text-slate-800">Pilih File & Pengaturan</h3>
