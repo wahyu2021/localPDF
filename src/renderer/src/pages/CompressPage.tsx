@@ -5,7 +5,7 @@ import { PDFCanvasPreview } from '../components/PDFCanvasPreview';
 import { QualitySelector } from '../components/QualitySelector';
 import { useCompressStore } from '../store/compressStore';
 import { toast } from 'sonner';
-import { Loader2, Save, RotateCcw, ArrowRight } from 'lucide-react';
+import { Loader2, Save, RotateCcw, ArrowRight, UploadCloud } from 'lucide-react';
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -115,6 +115,13 @@ export function CompressPage() {
               <div>
                 <h3 className="text-sm font-semibold text-slate-800">Pengaturan Kompresi</h3>
               </div>
+              <button
+                onClick={reset}
+                className="px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded hover:bg-teal-100 flex items-center gap-2 transition-colors"
+              >
+                <UploadCloud size={16} />
+                Ganti File
+              </button>
             </div>
 
             <div className="p-4 bg-slate-50 min-h-[300px]">
