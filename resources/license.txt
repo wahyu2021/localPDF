@@ -1,0 +1,24 @@
+========================================================================
+                      LocalPDF - END USER LICENSE AGREEMENT
+========================================================================
+
+Selamat datang di LocalPDF!
+
+LocalPDF adalah perangkat lunak pemrosesan PDF yang beroperasi sepenuhnya secara luring (offline) di komputer Anda. Aplikasi ini memastikan privasi dan keamanan dokumen Anda, karena tidak ada satupun file yang diunggah ke internet.
+
+Dengan melanjutkan instalasi, Anda menyetujui ketentuan berikut:
+
+1. PENGGUNAAN
+Perangkat lunak ini bebas digunakan untuk keperluan personal maupun profesional. Anda dapat menggunakan seluruh fitur (Kompres, Gabung, Pisah, Konversi) tanpa batasan.
+
+2. PRIVASI
+Privasi Anda adalah prioritas. Seluruh proses manipulasi PDF dan konversi dokumen dilakukan oleh komponen internal di dalam perangkat Anda sendiri. 
+
+3. TANPA JAMINAN
+Aplikasi ini disediakan "sebagaimana adanya" (as is) tanpa jaminan bentuk apa pun. Pengembang tidak bertanggung jawab atas kehilangan data atau kerusakan yang terjadi akibat penggunaan perangkat lunak ini. 
+
+4. DISTRIBUSI
+Dilarang memodifikasi atau menjual ulang aplikasi ini tanpa izin tertulis dari pengembang aslinya.
+
+Terima kasih telah menggunakan LocalPDF!
+========================================================================

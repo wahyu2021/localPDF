@@ -1,5 +1,6 @@
 import { BrowserWindow, app } from 'electron';
 import { join } from 'path';
+import icon from '../../resources/icon.ico?asset';
 
 export function createMainWindow(): BrowserWindow {
   const mainWindow = new BrowserWindow({
@@ -9,6 +10,7 @@ export function createMainWindow(): BrowserWindow {
     minHeight: 600,
     show: false,
     autoHideMenuBar: true,
+    icon: icon,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,

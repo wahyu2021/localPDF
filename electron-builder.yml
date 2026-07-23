@@ -24,7 +24,7 @@ extraResources:
 
 win:
   target: nsis
-  icon: public/icon.ico
+  icon: resources/icon.ico
 
 nsis:
   oneClick: false
@@ -32,6 +32,12 @@ nsis:
   createDesktopShortcut: true
   createStartMenuShortcut: true
   shortcutName: LocalPDF
+  installerIcon: resources/icon.ico
+  uninstallerIcon: resources/icon.ico
+  installerSidebar: resources/sidebar.bmp
+  uninstallerSidebar: resources/sidebar.bmp
+  installerHeader: resources/header.bmp
+  license: resources/license.txt
 
 # Placeholder untuk build macOS/Linux di v2
 # mac:
