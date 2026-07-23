@@ -111,10 +111,28 @@ export function CompressPage() {
     <div className="w-full max-w-5xl mx-auto pb-10">
       <div className="space-y-6">
         {!file ? (
-          <div className="pt-8 animate-in fade-in duration-500">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-slate-800">Kompres PDF</h2>
-              <p className="text-slate-500 mt-2">Perkecil ukuran file PDF Anda dengan mudah tanpa banyak kehilangan kualitas.</p>
+          <div className="animate-in fade-in duration-500">
+            {/* Header Section */}
+            <div className="flex items-center justify-between mb-8 pt-4">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-800">Kompres PDF</h2>
+                <p className="text-sm text-slate-500 mt-1">Perkecil ukuran file PDF Anda dengan mudah tanpa banyak kehilangan kualitas.</p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-teal-700 bg-teal-50 border-teal-200 hover:bg-teal-100 shadow-sm"
+              >
+                <UploadCloud size={18} className="mr-2" />
+                Pilih File PDF
+              </Button>
+              <input
+                type="file"
+                accept="application/pdf"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+              />
             </div>
             <DragDropZone onFileSelect={setFile} className="h-72 shadow-sm" />
           </div>
