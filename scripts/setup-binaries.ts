@@ -33,6 +33,7 @@ async function downloadBinary() {
   // Contoh simulasi pembuatan file binary agar aplikasi bisa dites tanpa error
   const qpdfPath = path.join(BINARIES_DIR, 'qpdf.exe');
   const gsPath = path.join(BINARIES_DIR, 'gswin64c.exe');
+  const sofficePath = path.join(BINARIES_DIR, 'soffice.exe');
 
   if (!fs.existsSync(qpdfPath)) {
     console.log(`[Mock] Menyiapkan ${qpdfPath}...`);
@@ -42,6 +43,11 @@ async function downloadBinary() {
   if (!fs.existsSync(gsPath)) {
     console.log(`[Mock] Menyiapkan ${gsPath}...`);
     fs.writeFileSync(gsPath, 'dummy-gs-binary-content');
+  }
+
+  if (!fs.existsSync(sofficePath)) {
+    console.log(`[Mock] Menyiapkan ${sofficePath}...`);
+    fs.writeFileSync(sofficePath, 'dummy-soffice-binary-content');
   }
 
   console.log('✅ Setup binary selesai (Simulasi Mock berhasil).');

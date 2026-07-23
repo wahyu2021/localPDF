@@ -3,7 +3,7 @@ export const IPC_CHANNELS = {
   SAVE_PDF: 'save-pdf',
   MERGE_PDF: 'merge-pdf',
   SPLIT_PDF: 'split-pdf',
-  CONVERT_TO_PDF: 'convert-to-pdf',
+  CONVERT_PDF: 'convert-pdf',
   PROTECT_PDF: 'protect-pdf',
   UNLOCK_PDF: 'unlock-pdf',
   PROGRESS_UPDATE: 'progress-update',

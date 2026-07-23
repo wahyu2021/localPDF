@@ -3,6 +3,7 @@ import { Toaster } from 'sonner';
 import { CompressPage } from './pages/CompressPage';
 import { MergePage } from './pages/MergePage';
 import { SplitPage } from './pages/SplitPage';
+import { ConvertPage } from './pages/ConvertPage';
 import { FileDown, Layers, SplitSquareHorizontal, FileArchive, Lock, Unlock } from 'lucide-react';
 import { cn } from './utils/cn';
 import logo from './assets/logo.png';
@@ -27,6 +28,8 @@ export default function App() {
         return <MergePage />;
       case 'Split':
         return <SplitPage />;
+      case 'Convert':
+        return <ConvertPage />;
       default:
         return (
           <div className="flex items-center justify-center h-full text-sm font-medium text-slate-500">

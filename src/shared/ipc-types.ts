@@ -54,3 +54,16 @@ export interface SplitResult {
   filesGenerated?: number;
   error?: string;
 }
+
+export interface ConvertPayload {
+  filePaths: string[];
+  mode: 'office-to-pdf' | 'image-to-pdf' | 'pdf-to-image';
+  outputDirectory: string;
+}
+
+export interface ConvertResult {
+  success: boolean;
+  outputDirectory?: string;
+  filesGenerated?: number;
+  error?: string;
+}
