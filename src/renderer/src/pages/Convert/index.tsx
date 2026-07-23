@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { useConvertStore } from '../../store/convertStore';
 import { FeatureLayout } from '../../components/layout/FeatureLayout';
 import { ConvertModeCards } from './components/ConvertModeCards';
+import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group';
+import { Label } from '../../components/ui/label';
 
 const formatSize = (bytes: number) => {
   if (bytes === 0) return '0 B';
@@ -17,20 +19,39 @@ const formatSize = (bytes: number) => {
 
 export function ConvertPage() {
   const {
-    files, mode, isProcessing, result,
-    setFiles, addFiles, removeFile, setMode, setIsProcessing, setResult, reset,
+    files, mode, isProcessing, result, outputFormat, progress,
+    setFiles, addFiles, removeFile, setMode, setIsProcessing, setResult, reset, setOutputFormat, setProgress
   } = useConvertStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<string>('');
 
   useEffect(() => {
     if (!window.api) return;
     const unsubscribe = window.api.onProgressUpdate((data) => {
-      // Handle UI progress updates here if needed
+      setProgress(data.percent);
+      
+      if (startTime && data.percent > 0 && data.percent < 100) {
+        const elapsed = Date.now() - startTime;
+        const totalEstimated = elapsed / (data.percent / 100);
+        const remainingMs = totalEstimated - elapsed;
+        
+        if (remainingMs > 0) {
+          const remainingSec = Math.ceil(remainingMs / 1000);
+          if (remainingSec > 60) {
+            setTimeRemaining(`~${Math.floor(remainingSec / 60)} mnt ${remainingSec % 60} dtk`);
+          } else {
+            setTimeRemaining(`~${remainingSec} detik lagi`);
+          }
+        }
+      } else if (data.percent === 100) {
+        setTimeRemaining('Selesai!');
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [startTime, setProgress]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -97,10 +118,13 @@ export function ConvertPage() {
       }
 
       setIsProcessing(true);
+      setStartTime(Date.now());
+      setProgress(0);
+      setTimeRemaining('Menghitung estimasi...');
       toast.loading('Sedang memproses konversi...', { id: 'convert-progress' });
 
       const filePaths = files.map(f => window.api.getFilePath(f)).filter(p => p !== '');
-      const res = await window.api.convertPdf({ filePaths, mode, outputDirectory });
+      const res = await window.api.convertPdf({ filePaths, mode, outputDirectory, outputFormat });
 
       if (res.success) {
         setResult(res);
@@ -112,6 +136,7 @@ export function ConvertPage() {
       toast.error(`Terjadi kesalahan: ${err.message}`, { id: 'convert-progress' });
     } finally {
       setIsProcessing(false);
+      setStartTime(null);
     }
   };
 
@@ -259,23 +284,61 @@ export function ConvertPage() {
                     </div>
                   </div>
                 ) : (
-                  <Button 
-                    onClick={handleConvert}
-                    disabled={isProcessing}
-                    className="w-full h-14 bg-teal-600 hover:bg-teal-700 text-white text-lg font-bold shadow-lg shadow-teal-600/20 transition-all active:scale-[0.98]"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Memproses...
-                      </>
-                    ) : (
-                      <>
-                        Mulai Konversi
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </>
+                  <div className="flex flex-col space-y-6">
+                    {mode === 'pdf-to-image' && (
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold text-slate-700">Format Gambar Output</Label>
+                        <RadioGroup 
+                          value={outputFormat} 
+                          onValueChange={(val: 'jpg'|'png') => setOutputFormat(val)}
+                          className="grid grid-cols-2 gap-4"
+                        >
+                          <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has([data-state=checked])]:border-teal-500 [&:has([data-state=checked])]:bg-teal-50">
+                            <RadioGroupItem value="jpg" id="format-jpg" className="text-teal-600" />
+                            <Label htmlFor="format-jpg" className="cursor-pointer flex-1 font-medium">JPG / JPEG</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has([data-state=checked])]:border-teal-500 [&:has([data-state=checked])]:bg-teal-50">
+                            <RadioGroupItem value="png" id="format-png" className="text-teal-600" />
+                            <Label htmlFor="format-png" className="cursor-pointer flex-1 font-medium">PNG (Transparan)</Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
                     )}
-                  </Button>
+                    {isProcessing && (
+                      <div className="space-y-2 mt-4 p-4 bg-slate-50 border border-slate-100 rounded-lg">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="font-medium text-slate-700">Progres Konversi</span>
+                          <span className="font-bold text-teal-600">{progress}%</span>
+                        </div>
+                        <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                          <div 
+                            className="bg-teal-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+                            style={{ width: `${progress}%` }}
+                          ></div>
+                        </div>
+                        <div className="text-xs text-slate-500 text-right mt-1 font-medium">
+                          {timeRemaining}
+                        </div>
+                      </div>
+                    )}
+                    <Button 
+                      onClick={handleConvert}
+                      disabled={isProcessing}
+                      className="w-full h-14 bg-teal-600 hover:bg-teal-700 text-white text-lg font-bold shadow-lg shadow-teal-600/20 transition-all active:scale-[0.98]"
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Memproses...
+                        </>
+                      ) : (
+                        <>
+                          Mulai Konversi
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 )}
               </CardContent>
             </Card>

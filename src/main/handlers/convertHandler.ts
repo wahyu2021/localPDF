@@ -28,7 +28,7 @@ export async function handleConvertPdf(
   event: IpcMainInvokeEvent,
   payload: ConvertPayload
 ): Promise<ConvertResult> {
-  const { filePaths, mode, outputDirectory } = payload;
+  const { filePaths, mode, outputDirectory, outputFormat = 'jpg' } = payload;
   const taskId = 'convert_' + Date.now();
   const window = BrowserWindow.fromWebContents(event.sender);
   let filesGenerated = 0;
@@ -65,22 +65,30 @@ export async function handleConvertPdf(
         filesGenerated++;
 
       } else if (mode === 'pdf-to-image') {
-        log.info(`[ConvertHandler] PDF -> Image: ${file}`);
-        // Ghostscript render ke JPEG
-        // gswin64c -dSAFER -dBATCH -dNOPAUSE -r300 -sDEVICE=jpeg -dJPEGQ=90 -sOutputFile="out/page-%03d.jpg" input.pdf
-        const outputPattern = path.join(outputDirectory, `${parsedPath.name}_page-%03d.jpg`);
-        await runEngine('gs/bin/gswin64c.exe', [
+        log.info(`[ConvertHandler] PDF -> Image: ${file} (Format: ${outputFormat})`);
+        const isPng = outputFormat === 'png';
+        const ext = isPng ? 'png' : 'jpg';
+        const device = isPng ? 'png16m' : 'jpeg';
+        
+        const outputPattern = path.join(outputDirectory, `${parsedPath.name}_page-%03d.${ext}`);
+        const gsArgs = [
           '-dSAFER',
           '-dBATCH',
           '-dNOPAUSE',
           '-r300',
-          '-sDEVICE=jpeg',
-          '-dJPEGQ=90',
+          `-sDEVICE=${device}`,
           '-dTextAlphaBits=4',
           '-dGraphicsAlphaBits=4',
           `-sOutputFile=${outputPattern}`,
           file
-        ]);
+        ];
+
+        // JPEG quality only applies to jpeg
+        if (!isPng) {
+          gsArgs.splice(5, 0, '-dJPEGQ=90');
+        }
+
+        await runEngine('gs/bin/gswin64c.exe', gsArgs);
         // Ghostscript bisa menghasilkan banyak file, kita hanya menghitung file inputnya saja sebagai +1 operasi sukses
         filesGenerated++;
 

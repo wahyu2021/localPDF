@@ -8,10 +8,12 @@ interface ConvertState {
   isProcessing: boolean;
   progress: number;
   result: any;
+  outputFormat: 'jpg' | 'png';
   setFiles: (files: File[]) => void;
   addFiles: (files: File[]) => void;
   removeFile: (index: number) => void;
   setMode: (mode: ConvertMode) => void;
+  setOutputFormat: (format: 'jpg' | 'png') => void;
   setIsProcessing: (isProcessing: boolean) => void;
   setProgress: (progress: number) => void;
   setResult: (result: any) => void;
@@ -24,10 +26,12 @@ export const useConvertStore = create<ConvertState>((set) => ({
   isProcessing: false,
   progress: 0,
   result: null,
+  outputFormat: 'jpg',
   setFiles: (files) => set({ files }),
   addFiles: (newFiles) => set((state) => ({ files: [...state.files, ...newFiles] })),
   removeFile: (index) => set((state) => ({ files: state.files.filter((_, i) => i !== index) })),
   setMode: (mode) => set({ mode }),
+  setOutputFormat: (outputFormat) => set({ outputFormat }),
   setIsProcessing: (isProcessing) => set({ isProcessing }),
   setProgress: (progress) => set({ progress }),
   setResult: (result) => set({ result }),
@@ -36,6 +40,7 @@ export const useConvertStore = create<ConvertState>((set) => ({
     mode: null,
     isProcessing: false,
     progress: 0,
-    result: null
+    result: null,
+    outputFormat: 'jpg'
   }),
 }));

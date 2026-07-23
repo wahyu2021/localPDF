@@ -59,6 +59,7 @@ export interface ConvertPayload {
   filePaths: string[];
   mode: 'office-to-pdf' | 'image-to-pdf' | 'pdf-to-image';
   outputDirectory: string;
+  outputFormat?: 'jpg' | 'png';
 }
 
 export interface ConvertResult {
