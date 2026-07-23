@@ -41,3 +41,8 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 - [x] **Track: PDF ke Word**
 *Link: [./archive/pdf-to-word_20260723/](./archive/pdf-to-word_20260723/)*
+
+---
+
+- [ ] **Track: Refactor UI Components (PDFToWord & Lainnya)**
+*Link: [./tracks/refactor-page-pdftoword_20260724/](./tracks/refactor-page-pdftoword_20260724/)*
