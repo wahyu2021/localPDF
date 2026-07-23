@@ -12,7 +12,8 @@ import { ThumbnailPreview } from '../../components/shared/ThumbnailPreview';
 import { PDFCanvasPreview } from '../../components/shared/PDFCanvasPreview';
 import { FeatureLayout } from '../../components/layout/FeatureLayout';
 import { useProgressTracker } from '../../hooks/useProgressTracker';
-import { ProgressBar } from '../../components/shared/ProgressBar';
+import { ProcessActionGroup } from '../../components/shared/ProcessActionGroup';
+import { SuccessCard } from '../../components/shared/SuccessCard';
 
 export function SplitPage() {
   const {
@@ -249,79 +250,61 @@ export function SplitPage() {
                   </CardContent>
                 </Card>
 
-                <div className="flex flex-col gap-3">
-                  {isProcessing && <ProgressBar progress={progress} timeRemaining={timeRemaining} label="Progres Pemisahan" />}
-
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={handleRemoveFile}
-                      disabled={isProcessing}
-                      className="flex-1 py-6 shadow-sm text-slate-600"
-                    >
-                      Batal
-                    </Button>
-                    <Button
-                      onClick={handleProcess}
-                      disabled={isProcessing || (mode === 'extract' && !pagesInput.trim())}
-                      className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 size={18} className="animate-spin mr-2" />
-                          Memproses...
-                        </>
-                      ) : (
-                        <>
-                          Pisahkan Sekarang
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
+                <ProcessActionGroup
+                  isProcessing={isProcessing}
+                  progress={progress}
+                  timeRemaining={timeRemaining}
+                  progressLabel="Progres Pemisahan"
+                  onCancel={handleRemoveFile}
+                  cancelLabel="Batal"
+                  onProcess={handleProcess}
+                  processLabel={
+                    <>
+                      Pisahkan Sekarang
+                      <ArrowRight className="ml-2 h-4 w-4 inline" />
+                    </>
+                  }
+                  processInProgressLabel="Memproses..."
+                  disableProcess={mode === 'extract' && !pagesInput.trim()}
+                />
               </div>
             </div>
           )}
         </div>
       ) : (
-        <div className="animate-in zoom-in-95 duration-500 max-w-2xl mx-auto mt-12">
-          <Card className="border-slate-200 shadow-sm text-center pt-8">
-            <CardContent>
-              <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FileArchive size={40} />
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Pemecahan Selesai!</h2>
-              <p className="text-slate-500 mb-10 text-lg">
-                Proses {mode === 'extract' ? 'ekstraksi' : 'pemecahan'} PDF berhasil menghasilkan <span className="font-extrabold text-emerald-600">{result.filesGenerated}</span> file.
-              </p>
-              
-              <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 text-left mb-10">
-                <p className="text-xs font-bold text-slate-400 mb-1 uppercase tracking-widest">Lokasi File Disimpan</p>
-                <p className="text-sm font-medium text-slate-700 break-all select-all font-mono bg-white p-3 border border-slate-200 rounded mt-2">
-                  {result.outputDirectory}
-                </p>
-              </div>
-
-              <div className="flex justify-center gap-4">
-                <Button
-                  variant="outline"
-                  onClick={reset}
-                  className="px-8 py-6 text-sm font-bold shadow-sm"
-                >
-                  Proses File Lain
-                </Button>
-                <Button
-                  onClick={handleOpenFolder}
-                  className="px-8 py-6 text-sm font-bold bg-teal-600 hover:bg-teal-700 shadow-sm"
-                >
-                  <FolderOpen size={18} className="mr-2" />
-                  Buka Folder Hasil
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <SuccessCard
+          icon={<FileArchive size={40} />}
+          iconColorClass="bg-emerald-100 text-emerald-600"
+          title="Pemecahan Selesai!"
+          description={
+            <>Proses {mode === 'extract' ? 'ekstraksi' : 'pemecahan'} PDF berhasil menghasilkan <span className="font-extrabold text-emerald-600">{result.filesGenerated}</span> file.</>
+          }
+          actions={
+            <>
+              <Button
+                variant="outline"
+                onClick={reset}
+                className="px-8 py-6 text-sm font-bold shadow-sm"
+              >
+                Proses File Lain
+              </Button>
+              <Button
+                onClick={handleOpenFolder}
+                className="px-8 py-6 text-sm font-bold bg-teal-600 hover:bg-teal-700 shadow-sm"
+              >
+                <FolderOpen size={18} className="mr-2" />
+                Buka Folder Hasil
+              </Button>
+            </>
+          }
+        >
+          <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 text-left mb-10">
+            <p className="text-xs font-bold text-slate-400 mb-1 uppercase tracking-widest">Lokasi File Disimpan</p>
+            <p className="text-sm font-medium text-slate-700 break-all select-all font-mono bg-white p-3 border border-slate-200 rounded mt-2">
+              {result.outputDirectory}
+            </p>
+          </div>
+        </SuccessCard>
       )}
     </FeatureLayout>
   );

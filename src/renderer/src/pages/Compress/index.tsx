@@ -10,7 +10,8 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { FeatureLayout } from '../../components/layout/FeatureLayout';
 import { useProgressTracker } from '../../hooks/useProgressTracker';
-import { ProgressBar } from '../../components/shared/ProgressBar';
+import { ProcessActionGroup } from '../../components/shared/ProcessActionGroup';
+import { SuccessCard } from '../../components/shared/SuccessCard';
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -164,82 +165,63 @@ export function CompressPage() {
                 </CardContent>
               </Card>
               
-              <div className="flex flex-col gap-3">
-                {isProcessing && <ProgressBar progress={progress} timeRemaining={timeRemaining} label="Progres Kompresi" />}
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={reset}
-                    disabled={isProcessing}
-                    className="flex-1 py-6"
-                  >
-                    Batal
-                  </Button>
-                  <Button
-                    onClick={handleCompress}
-                    disabled={isProcessing}
-                    className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 size={18} className="animate-spin mr-2" />
-                        Memproses...
-                      </>
-                    ) : (
-                      'Kompres Sekarang'
-                    )}
-                  </Button>
-                </div>
-              </div>
+              <ProcessActionGroup
+                isProcessing={isProcessing}
+                progress={progress}
+                timeRemaining={timeRemaining}
+                progressLabel="Progres Kompresi"
+                onCancel={reset}
+                cancelLabel="Batal"
+                onProcess={handleCompress}
+                processLabel="Kompres Sekarang"
+                processInProgressLabel="Memproses..."
+                disableProcess={false}
+              />
             </div>
           </div>
         </div>
       ) : (
-        <div className="animate-in zoom-in-95 duration-500 max-w-2xl mx-auto mt-12">
-          <Card className="border-slate-200 shadow-sm text-center pt-8">
-            <CardContent>
-              <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Save size={40} />
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Kompresi Berhasil!</h2>
-              <p className="text-slate-500 mb-10 text-lg">
-                File PDF Anda berhasil diperkecil sebesar <span className="font-extrabold text-emerald-600">{savedPercentage}%</span>.
+        <SuccessCard
+          icon={<Save size={40} />}
+          iconColorClass="bg-emerald-100 text-emerald-600"
+          title="Kompresi Berhasil!"
+          description={
+            <>File PDF Anda berhasil diperkecil sebesar <span className="font-extrabold text-emerald-600">{savedPercentage}%</span>.</>
+          }
+          actions={
+            <>
+              <Button
+                variant="outline"
+                onClick={handleCancel}
+                className="px-8 py-6 text-sm font-bold shadow-sm"
+              >
+                Ulangi
+              </Button>
+              <Button
+                onClick={handleSave}
+                className="px-8 py-6 text-sm font-bold bg-teal-600 hover:bg-teal-700 shadow-sm"
+              >
+                <Save size={18} className="mr-2" />
+                Simpan File Kompresi
+              </Button>
+            </>
+          }
+        >
+          <div className="grid grid-cols-2 gap-6 mb-10">
+            <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+              <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Ukuran Awal</p>
+              <p className="text-2xl font-bold text-slate-700">
+                {compressedResult.originalSize ? formatBytes(compressedResult.originalSize) : '?'}
               </p>
-              
-              <div className="grid grid-cols-2 gap-6 mb-10">
-                <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                  <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Ukuran Awal</p>
-                  <p className="text-2xl font-bold text-slate-700">
-                    {compressedResult.originalSize ? formatBytes(compressedResult.originalSize) : '?'}
-                  </p>
-                </div>
-                <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200">
-                  <p className="text-xs font-bold text-emerald-600 mb-2 uppercase tracking-widest">Ukuran Baru</p>
-                  <p className="text-2xl font-black text-emerald-700">
-                    {compressedResult.newSize ? formatBytes(compressedResult.newSize) : '?'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex justify-center gap-4">
-                <Button
-                  variant="outline"
-                  onClick={handleCancel}
-                  className="px-8 py-6 text-sm font-bold shadow-sm"
-                >
-                  Ulangi
-                </Button>
-                <Button
-                  onClick={handleSave}
-                  className="px-8 py-6 text-sm font-bold bg-teal-600 hover:bg-teal-700 shadow-sm"
-                >
-                  <Save size={18} className="mr-2" />
-                  Simpan File Kompresi
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+            <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200">
+              <p className="text-xs font-bold text-emerald-600 mb-2 uppercase tracking-widest">Ukuran Baru</p>
+              <p className="text-2xl font-black text-emerald-700">
+                {compressedResult.newSize ? formatBytes(compressedResult.newSize) : '?'}
+              </p>
+            </div>
+          </div>
+        </SuccessCard>
       )}
     </FeatureLayout>
   );

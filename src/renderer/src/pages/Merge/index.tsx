@@ -10,7 +10,8 @@ import { useMergeStore } from '../../store/mergeStore';
 import { cn } from '../../utils/cn';
 import { FeatureLayout } from '../../components/layout/FeatureLayout';
 import { useProgressTracker } from '../../hooks/useProgressTracker';
-import { ProgressBar } from '../../components/shared/ProgressBar';
+import { ProcessActionGroup } from '../../components/shared/ProcessActionGroup';
+import { SuccessCard } from '../../components/shared/SuccessCard';
 
 export function MergePage() {
   const {
@@ -186,36 +187,23 @@ export function MergePage() {
                 </CardContent>
               </Card>
 
-              <div className="flex flex-col gap-3">
-                {isProcessing && <ProgressBar progress={progress} timeRemaining={timeRemaining} label="Progres Penggabungan" />}
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={clearFiles}
-                    disabled={isProcessing || files.length === 0}
-                    className="flex-1 py-6 text-slate-600 shadow-sm"
-                  >
-                    Bersihkan
-                  </Button>
-                  <Button
-                    onClick={handleMerge}
-                    disabled={isProcessing || files.length < 2}
-                    className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 size={18} className="animate-spin mr-2" />
-                        Menggabungkan...
-                      </>
-                    ) : (
-                      <>
-                        Gabungkan PDF
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
+              <ProcessActionGroup
+                isProcessing={isProcessing}
+                progress={progress}
+                timeRemaining={timeRemaining}
+                progressLabel="Progres Penggabungan"
+                onCancel={clearFiles}
+                cancelLabel="Bersihkan"
+                onProcess={handleMerge}
+                processLabel={
+                  <>
+                    Gabungkan PDF
+                    <ArrowRight className="ml-2 h-5 w-5 inline" />
+                  </>
+                }
+                processInProgressLabel="Menggabungkan..."
+                disableProcess={files.length < 2}
+              />
             </div>
 
             <div className="lg:col-span-7 flex flex-col h-full">
@@ -276,51 +264,47 @@ export function MergePage() {
           </div>
         </div>
       ) : (
-        <div className="animate-in zoom-in-95 duration-500 max-w-2xl mx-auto mt-12">
-          <Card className="border-slate-200 shadow-sm text-center pt-8">
-            <CardContent>
-              <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Layers size={40} />
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Penggabungan Selesai!</h2>
-              <p className="text-slate-500 mb-10 text-lg">
-                <span className="font-extrabold text-emerald-600">{files.length}</span> file PDF Anda berhasil digabungkan menjadi satu.
+        <SuccessCard
+          icon={<Layers size={40} />}
+          iconColorClass="bg-emerald-100 text-emerald-600"
+          title="Penggabungan Selesai!"
+          description={
+            <><span className="font-extrabold text-emerald-600">{files.length}</span> file PDF Anda berhasil digabungkan menjadi satu.</>
+          }
+          actions={
+            <>
+              <Button
+                variant="outline"
+                onClick={handleCancel}
+                className="px-8 py-6 text-sm font-bold shadow-sm"
+              >
+                Ulangi
+              </Button>
+              <Button
+                onClick={handleSave}
+                className="px-8 py-6 text-sm font-bold bg-teal-600 hover:bg-teal-700 shadow-sm"
+              >
+                <Save size={18} className="mr-2" />
+                Simpan Hasil Gabungan
+              </Button>
+            </>
+          }
+        >
+          <div className="grid grid-cols-2 gap-6 mb-10">
+            <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+              <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Total Ukuran Awal</p>
+              <p className="text-2xl font-bold text-slate-700">
+                {mergeResult.totalOriginalSize ? formatBytes(mergeResult.totalOriginalSize) : '?'}
               </p>
-              
-              <div className="grid grid-cols-2 gap-6 mb-10">
-                <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                  <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Total Ukuran Awal</p>
-                  <p className="text-2xl font-bold text-slate-700">
-                    {mergeResult.totalOriginalSize ? formatBytes(mergeResult.totalOriginalSize) : '?'}
-                  </p>
-                </div>
-                <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200">
-                  <p className="text-xs font-bold text-emerald-600 mb-2 uppercase tracking-widest">Ukuran Gabungan</p>
-                  <p className="text-2xl font-black text-emerald-700">
-                    {mergeResult.newSize ? formatBytes(mergeResult.newSize) : '?'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex justify-center gap-4">
-                <Button
-                  variant="outline"
-                  onClick={handleCancel}
-                  className="px-8 py-6 text-sm font-bold shadow-sm"
-                >
-                  Ulangi
-                </Button>
-                <Button
-                  onClick={handleSave}
-                  className="px-8 py-6 text-sm font-bold bg-teal-600 hover:bg-teal-700 shadow-sm"
-                >
-                  <Save size={18} className="mr-2" />
-                  Simpan Hasil Gabungan
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+            <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200">
+              <p className="text-xs font-bold text-emerald-600 mb-2 uppercase tracking-widest">Ukuran Gabungan</p>
+              <p className="text-2xl font-black text-emerald-700">
+                {mergeResult.newSize ? formatBytes(mergeResult.newSize) : '?'}
+              </p>
+            </div>
+          </div>
+        </SuccessCard>
       )}
     </FeatureLayout>
   );

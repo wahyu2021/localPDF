@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Loader2, UploadCloud, X, ArrowRight, FileText, Image as ImageIcon, FileSpreadsheet } from 'lucide-react';
+import { Loader2, UploadCloud, X, ArrowRight, FileText, Image as ImageIcon, FileSpreadsheet, CheckCircle2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { toast } from 'sonner';
@@ -8,6 +8,9 @@ import { FeatureLayout } from '../../components/layout/FeatureLayout';
 import { ConvertModeCards } from './components/ConvertModeCards';
 import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group';
 import { Label } from '../../components/ui/label';
+import { ProcessActionGroup } from '../../components/shared/ProcessActionGroup';
+import { SuccessCard } from '../../components/shared/SuccessCard';
+import { useProgressTracker } from '../../hooks/useProgressTracker';
 
 const formatSize = (bytes: number) => {
   if (bytes === 0) return '0 B';
@@ -25,35 +28,8 @@ export function ConvertPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [timeRemaining, setTimeRemaining] = useState<string>('');
-
-  useEffect(() => {
-    if (!window.api) return;
-    const unsubscribe = window.api.onProgressUpdate((data) => {
-      setProgress(data.percent);
-      
-      if (startTime && data.percent > 10 && data.percent < 100) {
-        const elapsed = Date.now() - startTime;
-        const totalEstimated = elapsed / (data.percent / 100);
-        const remainingMs = totalEstimated - elapsed;
-        
-        if (remainingMs > 0) {
-          const remainingSec = Math.ceil(remainingMs / 1000);
-          if (remainingSec > 60) {
-            setTimeRemaining(`~${Math.floor(remainingSec / 60)} mnt ${remainingSec % 60} dtk`);
-          } else {
-            setTimeRemaining(`~${remainingSec} detik lagi`);
-          }
-        }
-      } else if (data.percent > 0 && data.percent <= 10) {
-        setTimeRemaining('Sedang memproses data...');
-      } else if (data.percent === 100) {
-        setTimeRemaining('Selesai!');
-      }
-    });
-    return () => unsubscribe();
-  }, [startTime, setProgress]);
+  
+  const { progress: localProgress, timeRemaining, startTracking, stopTracking } = useProgressTracker(setProgress, 'Menghitung estimasi...');
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -120,9 +96,7 @@ export function ConvertPage() {
       }
 
       setIsProcessing(true);
-      setStartTime(Date.now());
-      setProgress(0);
-      setTimeRemaining('Menghitung estimasi...');
+      startTracking();
       toast.loading('Sedang memproses konversi...', { id: 'convert-progress' });
 
       const filePaths = files.map(f => window.api.getFilePath(f)).filter(p => p !== '');
@@ -138,7 +112,7 @@ export function ConvertPage() {
       toast.error(`Terjadi kesalahan: ${err.message}`, { id: 'convert-progress' });
     } finally {
       setIsProcessing(false);
-      setStartTime(null);
+      stopTracking();
     }
   };
 
@@ -199,6 +173,29 @@ export function ConvertPage() {
             </CardContent>
           </Card>
         </div>
+      ) : result && result.success ? (
+        <SuccessCard
+          icon={CheckCircle2}
+          title="Konversi Selesai!"
+          description={`Konversi sukses! ${result.filesGenerated || files.length} file dihasilkan.`}
+          actions={
+            <>
+              <Button 
+                onClick={handleOpenFolder}
+                className="bg-teal-600 hover:bg-teal-700 text-white px-8"
+              >
+                Buka Folder
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={reset}
+                className="px-8 text-slate-600 border-slate-200 hover:bg-slate-50"
+              >
+                Kembali ke Menu Awal
+              </Button>
+            </>
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 flex flex-col space-y-6">
@@ -258,90 +255,42 @@ export function ConvertPage() {
                   Total file yang akan diproses: <strong>{files.length} dokumen</strong>.
                 </div>
 
-                {result && result.success ? (
-                  <div className="space-y-4 bg-teal-50 p-4 rounded-xl border border-teal-100 animate-in fade-in zoom-in-95">
-                    <div className="flex items-center space-x-3 text-teal-700">
-                      <div className="bg-teal-100 p-2 rounded-full shrink-0">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <p className="font-bold text-sm">Konversi Selesai!</p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 gap-2 pt-2">
-                      <Button 
-                        onClick={handleOpenFolder}
-                        className="w-full bg-teal-600 hover:bg-teal-700 text-white"
+                <div className="flex flex-col space-y-6">
+                  {mode === 'pdf-to-image' && (
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-slate-700">Format Gambar Output</Label>
+                      <RadioGroup 
+                        value={outputFormat} 
+                        onValueChange={(val: 'jpg'|'png') => setOutputFormat(val)}
+                        className="grid grid-cols-2 gap-4"
                       >
-                        Buka Folder
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        onClick={reset}
-                        className="w-full bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                      >
-                        Kembali ke Menu Awal
-                      </Button>
+                        <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has([data-state=checked])]:border-teal-500 [&:has([data-state=checked])]:bg-teal-50">
+                          <RadioGroupItem value="jpg" id="format-jpg" className="text-teal-600" />
+                          <Label htmlFor="format-jpg" className="cursor-pointer flex-1 font-medium">JPG / JPEG</Label>
+                        </div>
+                        <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has([data-state=checked])]:border-teal-500 [&:has([data-state=checked])]:bg-teal-50">
+                          <RadioGroupItem value="png" id="format-png" className="text-teal-600" />
+                          <Label htmlFor="format-png" className="cursor-pointer flex-1 font-medium">PNG (Transparan)</Label>
+                        </div>
+                      </RadioGroup>
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col space-y-6">
-                    {mode === 'pdf-to-image' && (
-                      <div className="space-y-3">
-                        <Label className="text-sm font-semibold text-slate-700">Format Gambar Output</Label>
-                        <RadioGroup 
-                          value={outputFormat} 
-                          onValueChange={(val: 'jpg'|'png') => setOutputFormat(val)}
-                          className="grid grid-cols-2 gap-4"
-                        >
-                          <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has([data-state=checked])]:border-teal-500 [&:has([data-state=checked])]:bg-teal-50">
-                            <RadioGroupItem value="jpg" id="format-jpg" className="text-teal-600" />
-                            <Label htmlFor="format-jpg" className="cursor-pointer flex-1 font-medium">JPG / JPEG</Label>
-                          </div>
-                          <div className="flex items-center space-x-2 border rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has([data-state=checked])]:border-teal-500 [&:has([data-state=checked])]:bg-teal-50">
-                            <RadioGroupItem value="png" id="format-png" className="text-teal-600" />
-                            <Label htmlFor="format-png" className="cursor-pointer flex-1 font-medium">PNG (Transparan)</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-                    )}
-                    {isProcessing && (
-                      <div className="space-y-2 mt-4 p-4 bg-slate-50 border border-slate-100 rounded-lg">
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="font-medium text-slate-700">Progres Konversi</span>
-                          <span className="font-bold text-teal-600">{progress}%</span>
-                        </div>
-                        <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
-                          <div 
-                            className="bg-teal-600 h-2.5 rounded-full transition-all duration-300 ease-out"
-                            style={{ width: `${progress}%` }}
-                          ></div>
-                        </div>
-                        <div className="text-xs text-slate-500 text-right mt-1 font-medium">
-                          {timeRemaining}
-                        </div>
-                      </div>
-                    )}
-                    <Button 
-                      onClick={handleConvert}
-                      disabled={isProcessing}
-                      className="w-full h-14 bg-teal-600 hover:bg-teal-700 text-white text-lg font-bold shadow-lg shadow-teal-600/20 transition-all active:scale-[0.98]"
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Memproses...
-                        </>
-                      ) : (
-                        <>
-                          Mulai Konversi
-                          <ArrowRight className="ml-2 h-5 w-5" />
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
+                  )}
+                  
+                  <ProcessActionGroup
+                    isProcessing={isProcessing}
+                    progress={progress}
+                    timeRemaining={timeRemaining}
+                    progressLabel="Progres Konversi"
+                    onProcess={handleConvert}
+                    processLabel={
+                      <>
+                        Mulai Konversi
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </>
+                    }
+                    processInProgressLabel="Memproses..."
+                  />
+                </div>
               </CardContent>
             </Card>
           </div>

@@ -9,7 +9,8 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { FeatureLayout } from '../../components/layout/FeatureLayout';
 import { useProgressTracker } from '../../hooks/useProgressTracker';
-import { ProgressBar } from '../../components/shared/ProgressBar';
+import { SuccessCard } from '../../components/shared/SuccessCard';
+import { ProcessActionGroup } from '../../components/shared/ProcessActionGroup';
 
 export function PDFToWordPage() {
   const {
@@ -165,68 +166,48 @@ export function PDFToWordPage() {
                 </CardContent>
               </Card>
 
-              <div className="flex flex-col gap-3">
-                {isProcessing && <ProgressBar progress={progress} timeRemaining={timeRemaining} label="Progres Konversi" />}
-
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={reset}
-                    disabled={isProcessing}
-                    className="flex-1 py-6"
-                  >
-                    Batal
-                  </Button>
-                  <Button
-                    onClick={handleConvert}
-                    disabled={isProcessing}
-                    className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 size={18} className="animate-spin mr-2" />
-                        Mengonversi...
-                      </>
-                    ) : (
-                      'Konversi ke Word'
-                    )}
-                  </Button>
-                </div>
-              </div>
+              <ProcessActionGroup
+                isProcessing={isProcessing}
+                progress={progress}
+                timeRemaining={timeRemaining}
+                progressLabel="Progres Konversi"
+                onCancel={reset}
+                onProcess={handleConvert}
+                processLabel="Konversi ke Word"
+                processInProgressLabel="Mengonversi..."
+              />
             </div>
           </div>
         </div>
       ) : (
-        <div className="animate-in zoom-in-95 duration-500 max-w-2xl mx-auto mt-12">
-          <Card className="border-slate-200 shadow-sm text-center pt-8">
-            <CardContent>
-              <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FileText size={40} />
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-800 mb-3">Konversi Berhasil!</h2>
-              <p className="text-slate-500 mb-10 text-lg">
-                File PDF Anda berhasil diubah menjadi dokumen <span className="font-extrabold text-blue-600">.docx</span> yang dapat diedit.
-              </p>
-
-              <div className="flex justify-center gap-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setResult(null)}
-                  className="px-8 py-6 text-sm font-bold shadow-sm"
-                >
-                  Konversi Lagi
-                </Button>
-                <Button
-                  onClick={handleSave}
-                  className="px-8 py-6 text-sm font-bold bg-blue-600 hover:bg-blue-700 shadow-sm"
-                >
-                  <Save size={18} className="mr-2" />
-                  Simpan File Word
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <SuccessCard
+          icon={FileText}
+          iconColorClass="bg-blue-100 text-blue-600"
+          title="Konversi Berhasil!"
+          description={
+            <>
+              File PDF Anda berhasil diubah menjadi dokumen <span className="font-extrabold text-blue-600">.docx</span> yang dapat diedit.
+            </>
+          }
+          actions={
+            <>
+              <Button
+                variant="outline"
+                onClick={() => setResult(null)}
+                className="px-8 py-6 text-sm font-bold shadow-sm"
+              >
+                Konversi Lagi
+              </Button>
+              <Button
+                onClick={handleSave}
+                className="px-8 py-6 text-sm font-bold bg-blue-600 hover:bg-blue-700 shadow-sm"
+              >
+                <Save size={18} className="mr-2" />
+                Simpan File Word
+              </Button>
+            </>
+          }
+        />
       )}
     </FeatureLayout>
   );
