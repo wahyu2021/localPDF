@@ -33,7 +33,7 @@ export function ConvertPage() {
     const unsubscribe = window.api.onProgressUpdate((data) => {
       setProgress(data.percent);
       
-      if (startTime && data.percent > 0 && data.percent < 100) {
+      if (startTime && data.percent > 10 && data.percent < 100) {
         const elapsed = Date.now() - startTime;
         const totalEstimated = elapsed / (data.percent / 100);
         const remainingMs = totalEstimated - elapsed;
@@ -46,6 +46,8 @@ export function ConvertPage() {
             setTimeRemaining(`~${remainingSec} detik lagi`);
           }
         }
+      } else if (data.percent > 0 && data.percent <= 10) {
+        setTimeRemaining('Sedang memproses data...');
       } else if (data.percent === 100) {
         setTimeRemaining('Selesai!');
       }
