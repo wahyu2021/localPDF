@@ -12,15 +12,26 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 interface PDFCanvasPreviewProps {
   file: File;
+  requestedPage?: number;
+  onLoadSuccess?: (numPages: number) => void;
 }
 
-export function PDFCanvasPreview({ file }: PDFCanvasPreviewProps) {
+export function PDFCanvasPreview({ file, requestedPage, onLoadSuccess }: PDFCanvasPreviewProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState<number>(1);
+
+  React.useEffect(() => {
+    if (requestedPage && numPages && requestedPage >= 1 && requestedPage <= numPages) {
+      setPageNumber(requestedPage);
+    }
+  }, [requestedPage, numPages]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
     setPageNumber(1);
+    if (onLoadSuccess) {
+      onLoadSuccess(numPages);
+    }
   }
 
   const prevPage = () => {
@@ -34,8 +45,8 @@ export function PDFCanvasPreview({ file }: PDFCanvasPreviewProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-200 shadow-inner">
-      <div className="relative group">
+    <div className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-200 shadow-inner min-h-[550px]">
+      <div className="relative group min-h-[460px] min-w-[320px] flex items-center justify-center">
         <Document
           file={file}
           onLoadSuccess={onDocumentLoadSuccess}
@@ -57,7 +68,13 @@ export function PDFCanvasPreview({ file }: PDFCanvasPreviewProps) {
             width={320} 
             renderTextLayer={false} 
             renderAnnotationLayer={false} 
-            className="transition-opacity duration-300"
+            loading={
+              <div className="flex flex-col items-center justify-center gap-2 w-[320px] h-[452px] bg-slate-50">
+                <Loader2 className="animate-spin text-teal-500 w-6 h-6" />
+                <span className="text-xs text-slate-400">Memuat halaman...</span>
+              </div>
+            }
+            className="transition-opacity duration-300 min-h-[452px] w-[320px] flex items-center justify-center"
           />
         </Document>
 

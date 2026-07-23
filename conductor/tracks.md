@@ -19,7 +19,7 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ---
 
-## [ ] Track: Fitur Split PDF
+## [~] Track: Fitur Split PDF
 - **Tautan:** [005-fitur-split-pdf](tracks/005-fitur-split-pdf/index.md)
 
 ---

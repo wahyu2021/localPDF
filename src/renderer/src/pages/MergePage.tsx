@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { FileText, X, UploadCloud, GripVertical, Save, Loader2, Layers } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { useMergeStore } from '../store/mergeStore';
 import { cn } from '../utils/cn';
 

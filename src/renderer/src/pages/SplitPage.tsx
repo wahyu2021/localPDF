@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useSplitStore, SplitMode } from '../store/splitStore';
 import { FileArchive, FolderOpen, Loader2, UploadCloud, X } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { toast } from 'sonner';
 import { ThumbnailPreview } from '../components/ThumbnailPreview';
 import { PDFCanvasPreview } from '../components/PDFCanvasPreview';
@@ -28,6 +28,8 @@ export function SplitPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pageInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [pageError, setPageError] = useState<string>('');
 
   // UX: Auto-focus input saat mode berpindah ke 'extract'
   useEffect(() => {
@@ -43,6 +45,8 @@ export function SplitPage() {
     }
     setFile(selectedFile);
     setResult(null);
+    setTotalPages(0);
+    setPageError('');
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +56,11 @@ export function SplitPage() {
   };
 
   // UX: Event handler untuk Drag and Drop
+  const onDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
   const onDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -82,11 +91,40 @@ export function SplitPage() {
     setPagesInput(val);
   };
 
+  useEffect(() => {
+    if (!pagesInput.trim() || totalPages === 0) {
+      setPageError('');
+      return;
+    }
+    
+    // Validasi out of bounds
+    const numbers = pagesInput.match(/\d+/g);
+    if (numbers) {
+      for (const numStr of numbers) {
+        const num = parseInt(numStr, 10);
+        if (num > totalPages) {
+          setPageError(`Halaman ${num} melebihi total dokumen (${totalPages} halaman).`);
+          return;
+        }
+        if (num === 0) {
+          setPageError('Halaman tidak boleh 0.');
+          return;
+        }
+      }
+    }
+    setPageError('');
+  }, [pagesInput, totalPages]);
+
   const handleProcess = async () => {
     if (!file) return;
     
     if (mode === 'extract' && !pagesInput.trim()) {
       toast.error('Harap masukkan rentang halaman (contoh: 1-3, 5).');
+      return;
+    }
+
+    if (pageError) {
+      toast.error('Terdapat error pada input halaman Anda.');
       return;
     }
 
@@ -178,7 +216,15 @@ export function SplitPage() {
                 {/* Kolom Kiri: Preview */}
                 <div className="lg:col-span-7 space-y-4">
                   <ThumbnailPreview file={file} onClear={handleRemoveFile} />
-                  <PDFCanvasPreview file={file} />
+                  <PDFCanvasPreview 
+                    file={file} 
+                    requestedPage={
+                      mode === 'extract' && pagesInput.match(/\d+/) 
+                        ? parseInt(pagesInput.match(/\d+/)![0], 10) 
+                        : 1
+                    } 
+                    onLoadSuccess={setTotalPages}
+                  />
                 </div>
 
                 {/* Kolom Kanan: Pengaturan */}
@@ -194,7 +240,7 @@ export function SplitPage() {
                           className={`flex items-start gap-4 p-5 border-2 rounded-xl cursor-pointer transition-colors ${mode === 'extract' ? 'border-teal-500 bg-teal-50/50' : 'border-slate-200 hover:bg-slate-50'}`}
                         >
                           <RadioGroupItem value="extract" id="extract" className="mt-0.5 sr-only" />
-                          <div className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center ${mode === 'extract' ? 'border-teal-600' : 'border-slate-300'}`}>
+                          <div className={`mt-0.5 w-4 h-4 shrink-0 rounded-full border flex items-center justify-center ${mode === 'extract' ? 'border-teal-600' : 'border-slate-300'}`}>
                             {mode === 'extract' && <div className="w-2 h-2 rounded-full bg-teal-600" />}
                           </div>
                           <div>
@@ -208,7 +254,7 @@ export function SplitPage() {
                           className={`flex items-start gap-4 p-5 border-2 rounded-xl cursor-pointer transition-colors ${mode === 'split_all' ? 'border-teal-500 bg-teal-50/50' : 'border-slate-200 hover:bg-slate-50'}`}
                         >
                           <RadioGroupItem value="split_all" id="split_all" className="mt-0.5 sr-only" />
-                          <div className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center ${mode === 'split_all' ? 'border-teal-600' : 'border-slate-300'}`}>
+                          <div className={`mt-0.5 w-4 h-4 shrink-0 rounded-full border flex items-center justify-center ${mode === 'split_all' ? 'border-teal-600' : 'border-slate-300'}`}>
                             {mode === 'split_all' && <div className="w-2 h-2 rounded-full bg-teal-600" />}
                           </div>
                           <div>
@@ -223,14 +269,20 @@ export function SplitPage() {
                           <Label htmlFor="pagesInput" className="block text-sm font-bold text-slate-800 mb-2">Rentang Halaman</Label>
                           <Input
                             id="pagesInput"
-                            ref={pageInputRef as any}
-                            type="text"
+                            ref={pageInputRef}
                             value={pagesInput}
                             onChange={handlePagesInputChange}
-                            placeholder="Contoh: 1-3, 5, 7-10"
-                            className="w-full bg-slate-50 border-slate-200 h-12 shadow-sm focus-visible:ring-teal-500"
+                            placeholder="contoh: 1-5, 8, 11-13"
+                            className={`border-2 h-12 ${pageError ? 'border-red-500 focus-visible:ring-red-500' : 'border-slate-200 focus-visible:ring-teal-500 focus-visible:border-teal-500'}`}
                           />
-                          <p className="text-xs text-slate-500 mt-2">Gunakan koma untuk memisahkan, dan strip untuk rentang.</p>
+                          {pageError ? (
+                            <p className="text-red-500 text-xs font-medium mt-2 flex items-center">
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2 inline-block"></span>
+                              {pageError}
+                            </p>
+                          ) : (
+                            <p className="text-slate-500 text-xs mt-2 font-medium">Pisahkan dengan koma (,) atau gunakan strip (-) untuk rentang halaman.</p>
+                          )}
                         </div>
                       )}
                     </CardContent>
@@ -249,7 +301,7 @@ export function SplitPage() {
                     <Button
                       onClick={handleProcess}
                       disabled={isProcessing}
-                      className="flex-[2] py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
+                      className="flex-2 py-6 bg-teal-600 hover:bg-teal-700 text-white shadow-sm"
                     >
                       {isProcessing ? (
                         <>

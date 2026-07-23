@@ -35,3 +35,10 @@
     export async function compressPdf(filePath: string, level: string): Promise<number> { ... }
     ```
 - **Dokumentasi Hidup:** Selalu perbarui blok dokumentasi (JSDoc) bersamaan dengan perubahan logika fungsi agar dokumentasi tidak menjadi usang dan menyesatkan.
+
+## 5. Standar Interaksi UI/UX
+- **Layout Asimetris Modern:** Gunakan grid `lg:grid-cols-12` dengan pembagian `lg:col-span-7` (Preview/Visual di kiri) dan `lg:col-span-5` (Pengaturan/Aksi di kanan). Hindari membungkus semua elemen ke dalam satu Card global.
+- **Preview Interaktif:** Jangan suruh user membuka PDF eksternal. Gunakan komponen `PDFCanvasPreview` yang mendukung paginasi (Prev/Next buttons) untuk memudahkan pembacaan konten PDF langsung dari dalam aplikasi.
+- **Validasi Real-time:** Terapkan pengecekan batas (out-of-bounds) dan validasi input secara instan. Sinkronkan total halaman dokumen (`onLoadSuccess` pada PDF) dengan input rentang, lalu cegah proses (blokir tombol/tampilkan error) jika melebih batas.
+- **Radio & Struktur Flexbox:** Selalu kelompokkan opsi sejenis di dalam satu induk `RadioGroup` untuk sinkronisasi state. Gunakan class utilitas seperti `shrink-0` pada elemen grafis terkecil agar tidak terdistorsi (squished) oleh panjang teks di sebelahnya.
+- **Anti-Layout Collapse:** Saat merender file berat (seperti halaman PDF tunggal), kunci ukuran wadah terluarnya (`wrapper`) dengan `min-h-[xxxpx]` (misal: `min-h-[550px]`) agar ketika transisi pergantian halaman berlangsung (loading state sementara), layar tidak mengalami lonjakan scroll (scroll-jump) yang merusak UX.

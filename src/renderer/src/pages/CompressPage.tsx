@@ -6,8 +6,8 @@ import { QualitySelector } from '../components/QualitySelector';
 import { useCompressStore } from '../store/compressStore';
 import { toast } from 'sonner';
 import { Loader2, Save, RotateCcw, ArrowRight, UploadCloud } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return '0 Bytes';
