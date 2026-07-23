@@ -19,12 +19,12 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ---
 
-## [~] Track: Fitur Split PDF
+## [x] Track: Fitur Split PDF
 - **Tautan:** [005-fitur-split-pdf](tracks/005-fitur-split-pdf/index.md)
 
 ---
 
-## [ ] Track: Fitur Convert PDF (PDF to Image)
+## [ ] Track: Fitur Convert PDF (Dua Arah: Office & Image)
 - **Tautan:** [006-fitur-convert-pdf](tracks/006-fitur-convert-pdf/index.md)
 
 ---
