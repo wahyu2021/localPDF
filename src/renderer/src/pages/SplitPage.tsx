@@ -166,64 +166,65 @@ export function SplitPage() {
                 </div>
               ) : (
                 <div className="bg-white border border-slate-200 rounded-md p-6 shadow-sm">
-                  {/* File Info Preview */}
-                  <div className="mb-4">
-                    <ThumbnailPreview file={file} onClear={handleRemoveFile} />
-                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Kolom Kiri: Preview */}
+                    <div className="space-y-4">
+                      <ThumbnailPreview file={file} onClear={handleRemoveFile} />
+                      <PDFCanvasPreview file={file} />
+                    </div>
 
-                  {/* Real PDF Canvas Preview */}
-                  <div className="mb-6">
-                    <PDFCanvasPreview file={file} />
-                  </div>
+                    {/* Kolom Kanan: Pengaturan */}
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="text-sm font-semibold text-slate-800 mb-4">Mode Pemecahan</h4>
+                        <div className="flex flex-col gap-3">
+                          <label className={`flex items-center gap-3 p-4 border rounded cursor-pointer transition-colors ${mode === 'extract' ? 'border-teal-500 bg-teal-50/50 ring-1 ring-teal-500' : 'border-slate-200 hover:bg-slate-50'}`}>
+                            <input
+                              type="radio"
+                              name="splitMode"
+                              value="extract"
+                              checked={mode === 'extract'}
+                              onChange={() => setMode('extract')}
+                              className="w-4 h-4 text-teal-600 focus:ring-teal-500"
+                            />
+                            <div>
+                              <span className="block text-sm font-semibold text-slate-800">Ekstrak Halaman</span>
+                              <span className="block text-xs text-slate-500 mt-1">Pilih halaman tertentu untuk disatukan</span>
+                            </div>
+                          </label>
+                          <label className={`flex items-center gap-3 p-4 border rounded cursor-pointer transition-colors ${mode === 'split_all' ? 'border-teal-500 bg-teal-50/50 ring-1 ring-teal-500' : 'border-slate-200 hover:bg-slate-50'}`}>
+                            <input
+                              type="radio"
+                              name="splitMode"
+                              value="split_all"
+                              checked={mode === 'split_all'}
+                              onChange={() => setMode('split_all')}
+                              className="w-4 h-4 text-teal-600 focus:ring-teal-500"
+                            />
+                            <div>
+                              <span className="block text-sm font-semibold text-slate-800">Pecah Semua</span>
+                              <span className="block text-xs text-slate-500 mt-1">1 file = 1 halaman terpisah</span>
+                            </div>
+                          </label>
+                        </div>
+                      </div>
 
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold text-slate-800 mb-3">Mode Pemecahan</h4>
-                    <div className="flex gap-4">
-                      <label className={`flex-1 flex items-center gap-3 p-4 border rounded cursor-pointer transition-colors ${mode === 'extract' ? 'border-teal-500 bg-teal-50/50 ring-1 ring-teal-500' : 'border-slate-200 hover:bg-slate-50'}`}>
-                        <input
-                          type="radio"
-                          name="splitMode"
-                          value="extract"
-                          checked={mode === 'extract'}
-                          onChange={() => setMode('extract')}
-                          className="w-4 h-4 text-teal-600 focus:ring-teal-500"
-                        />
+                      {mode === 'extract' && (
                         <div>
-                          <span className="block text-sm font-semibold text-slate-800">Ekstrak Halaman</span>
-                          <span className="block text-xs text-slate-500 mt-1">Pilih halaman tertentu untuk disatukan</span>
+                          <label htmlFor="pagesInput" className="block text-sm font-semibold text-slate-800 mb-2">Rentang Halaman</label>
+                          <input
+                            id="pagesInput"
+                            ref={pageInputRef}
+                            type="text"
+                            value={pagesInput}
+                            onChange={handlePagesInputChange}
+                            placeholder="Contoh: 1-3, 5, 7-10"
+                            className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-shadow shadow-sm"
+                          />
                         </div>
-                      </label>
-                      <label className={`flex-1 flex items-center gap-3 p-4 border rounded cursor-pointer transition-colors ${mode === 'split_all' ? 'border-teal-500 bg-teal-50/50 ring-1 ring-teal-500' : 'border-slate-200 hover:bg-slate-50'}`}>
-                        <input
-                          type="radio"
-                          name="splitMode"
-                          value="split_all"
-                          checked={mode === 'split_all'}
-                          onChange={() => setMode('split_all')}
-                          className="w-4 h-4 text-teal-600 focus:ring-teal-500"
-                        />
-                        <div>
-                          <span className="block text-sm font-semibold text-slate-800">Pecah Semua</span>
-                          <span className="block text-xs text-slate-500 mt-1">1 file = 1 halaman terpisah</span>
-                        </div>
-                      </label>
+                      )}
                     </div>
                   </div>
-
-                  {mode === 'extract' && (
-                    <div className="mb-2">
-                      <label htmlFor="pagesInput" className="block text-sm font-semibold text-slate-800 mb-2">Rentang Halaman</label>
-                      <input
-                        id="pagesInput"
-                        ref={pageInputRef}
-                        type="text"
-                        value={pagesInput}
-                        onChange={handlePagesInputChange}
-                        placeholder="Contoh: 1-3, 5, 7-10"
-                        className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-shadow"
-                      />
-                    </div>
-                  )}
                 </div>
               )}
             </div>

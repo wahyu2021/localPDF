@@ -119,17 +119,18 @@ export function CompressPage() {
 
             <div className="p-4 bg-slate-50 min-h-[300px]">
               <div className="bg-white border border-slate-200 rounded-md p-6 shadow-sm">
-                <div className="mb-4">
-                  <ThumbnailPreview file={file} onClear={reset} />
-                </div>
-
-                <div className="mb-6">
-                  <PDFCanvasPreview file={file} />
-                </div>
-                
-                <div className="mb-2">
-                  <h4 className="text-sm font-semibold text-slate-800 mb-3">Tingkat Kompresi</h4>
-                  <QualitySelector />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Kolom Kiri: Preview */}
+                  <div className="space-y-4">
+                    <ThumbnailPreview file={file} onClear={reset} />
+                    <PDFCanvasPreview file={file} />
+                  </div>
+                  
+                  {/* Kolom Kanan: Pengaturan */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-800 mb-4">Tingkat Kompresi</h4>
+                    <QualitySelector />
+                  </div>
                 </div>
               </div>
             </div>
