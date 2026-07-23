@@ -1,6 +1,8 @@
 import React from 'react';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
 import { FileText, X } from 'lucide-react';
-import { cn } from '../utils/cn';
+import { cn } from '../../utils/cn';
 
 interface ThumbnailPreviewProps {
   file: File;

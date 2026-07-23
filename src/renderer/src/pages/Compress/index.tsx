@@ -1,14 +1,14 @@
 import React, { useRef } from 'react';
-import { DragDropZone } from '../../components/DragDropZone';
-import { ThumbnailPreview } from '../../components/ThumbnailPreview';
-import { PDFCanvasPreview } from '../../components/PDFCanvasPreview';
-import { QualitySelector } from '../../components/QualitySelector';
+import { DragDropZone } from '../../components/shared/DragDropZone';
+import { ThumbnailPreview } from '../../components/shared/ThumbnailPreview';
+import { PDFCanvasPreview } from '../../components/shared/PDFCanvasPreview';
+import { QualitySelector } from '../../components/shared/QualitySelector';
 import { useCompressStore } from '../../store/compressStore';
 import { toast } from 'sonner';
 import { Loader2, Save, UploadCloud } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { FeatureLayout } from '../../components/FeatureLayout';
+import { FeatureLayout } from '../../components/layout/FeatureLayout';
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return '0 Bytes';

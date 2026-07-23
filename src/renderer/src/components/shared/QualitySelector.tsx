@@ -1,9 +1,9 @@
 import React from 'react';
-import { cn } from '../utils/cn';
-import { useCompressStore } from '../store/compressStore';
+import { cn } from '../../utils/cn';
+import { useCompressStore } from '../../store/compressStore';
 import { Settings, Zap, CheckCircle2, FileUp } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Label } from './ui/label';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { Label } from '../ui/label';
 
 export function QualitySelector() {
   const { quality, setQuality, customDpi, setCustomDpi } = useCompressStore();

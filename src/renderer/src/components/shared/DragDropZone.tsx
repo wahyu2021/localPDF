@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { UploadCloud, FileType2 } from 'lucide-react';
-import { cn } from '../utils/cn';
+import { cn } from '../../utils/cn';
 
 interface DragDropZoneProps {
   onFileSelect: (file: File, path: string) => void;

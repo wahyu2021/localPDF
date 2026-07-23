@@ -3,9 +3,12 @@ import { toast } from 'sonner';
 import { FileText, X, UploadCloud, GripVertical, Save, Loader2, Layers } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { DragDropZone } from '../../components/shared/DragDropZone';
+import { ThumbnailPreview } from '../../components/shared/ThumbnailPreview';
+import { PDFCanvasPreview } from '../../components/shared/PDFCanvasPreview';
 import { useMergeStore } from '../../store/mergeStore';
 import { cn } from '../../utils/cn';
-import { FeatureLayout } from '../../components/FeatureLayout';
+import { FeatureLayout } from '../../components/layout/FeatureLayout';
 
 export function MergePage() {
   const {

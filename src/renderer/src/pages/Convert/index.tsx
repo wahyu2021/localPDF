@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { toast } from 'sonner';
 import { useConvertStore } from '../../store/convertStore';
-import { FeatureLayout } from '../../components/FeatureLayout';
+import { FeatureLayout } from '../../components/layout/FeatureLayout';
 import { ConvertModeCards } from './components/ConvertModeCards';
 
 const formatSize = (bytes: number) => {

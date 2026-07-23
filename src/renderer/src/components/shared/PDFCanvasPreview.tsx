@@ -3,8 +3,8 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from './ui/button';
-import { cn } from '../utils/cn';
+import { Button } from '../ui/button';
+import { cn } from '../../utils/cn';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
 // Setup worker for vite secara offline & memastikan versi cocok

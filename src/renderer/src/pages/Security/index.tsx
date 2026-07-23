@@ -2,9 +2,9 @@ import { useState, useRef } from 'react';
 import { Lock, Unlock, ShieldAlert, Loader2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { toast } from 'sonner';
-import { DragDropZone } from '../../components/DragDropZone';
-import { ThumbnailPreview } from '../../components/ThumbnailPreview';
-import { FeatureLayout } from '../../components/FeatureLayout';
+import { DragDropZone } from '../../components/shared/DragDropZone';
+import { ThumbnailPreview } from '../../components/shared/ThumbnailPreview';
+import { FeatureLayout } from '../../components/layout/FeatureLayout';
 import { useSecurityStore } from '../../store/securityStore';
 
 // Sub-components

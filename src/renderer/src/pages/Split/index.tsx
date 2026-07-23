@@ -3,14 +3,14 @@ import { useSplitStore } from '../../store/splitStore';
 import { FileArchive, FolderOpen, Loader2, UploadCloud } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { DragDropZone } from '../../components/DragDropZone';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group';
 import { toast } from 'sonner';
-import { ThumbnailPreview } from '../../components/ThumbnailPreview';
-import { PDFCanvasPreview } from '../../components/PDFCanvasPreview';
-import { FeatureLayout } from '../../components/FeatureLayout';
+import { DragDropZone } from '../../components/shared/DragDropZone';
+import { ThumbnailPreview } from '../../components/shared/ThumbnailPreview';
+import { PDFCanvasPreview } from '../../components/shared/PDFCanvasPreview';
+import { FeatureLayout } from '../../components/layout/FeatureLayout';
 
 export function SplitPage() {
   const {
