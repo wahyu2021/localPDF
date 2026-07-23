@@ -135,16 +135,8 @@ export function MergePage() {
           <div className="bg-white border border-slate-300 rounded-md overflow-hidden">
             <div className="p-4 bg-slate-100 border-b border-slate-300 flex justify-between items-center">
               <div>
-                <h3 className="text-sm font-semibold text-slate-800">Daftar File PDF ({files.length})</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Tarik dan jatuhkan (*drag and drop*) file di bawah ini untuk mengatur urutan penggabungan.</p>
+                <h3 className="text-sm font-semibold text-slate-800">Pengaturan Penggabungan</h3>
               </div>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded hover:bg-teal-100 flex items-center gap-2 transition-colors"
-              >
-                <UploadCloud size={16} />
-                Tambah File
-              </button>
               <input
                 type="file"
                 multiple
@@ -155,54 +147,74 @@ export function MergePage() {
               />
             </div>
 
-            <div className="p-4 bg-slate-50 min-h-[300px]">
-              {files.length === 0 ? (
-                <div 
-                  className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-slate-300 rounded-md bg-white text-slate-400 hover:border-teal-400 hover:bg-teal-50 transition-colors cursor-pointer"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <UploadCloud size={40} className="mb-3" />
-                  <p className="text-sm font-medium">Klik atau drop file ke sini</p>
+            <div className="p-6 bg-slate-50 min-h-[400px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full">
+                {/* Kolom Kiri: Area Tambah File */}
+                <div className="flex flex-col h-full">
+                  <h4 className="text-sm font-semibold text-slate-800 mb-4">Tambah File</h4>
+                  <div 
+                    className="flex-1 flex flex-col items-center justify-center min-h-[250px] border-2 border-dashed border-slate-300 rounded-md bg-white text-slate-400 hover:border-teal-400 hover:bg-teal-50 transition-colors cursor-pointer"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <UploadCloud size={40} className="mb-3" />
+                    <p className="text-sm font-medium text-slate-600 mb-1">Klik untuk memilih file</p>
+                    <p className="text-xs text-slate-400">Bisa memilih banyak file sekaligus</p>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  {files.map((item, index) => (
-                    <div
-                      key={item.id}
-                      draggable
-                      onDragStart={(e) => onDragStart(e, index)}
-                      onDragOver={(e) => onDragOver(e)}
-                      onDrop={(e) => onDrop(e, index)}
-                      className={cn(
-                        "flex items-center gap-3 p-3 bg-white border border-slate-200 rounded shadow-sm group",
-                        draggedIdx === index ? "opacity-50" : ""
-                      )}
-                    >
-                      <div className="text-slate-300 cursor-grab active:cursor-grabbing hover:text-slate-500 p-1">
-                        <GripVertical size={20} />
+
+                {/* Kolom Kanan: Daftar File (Drag & Drop Reorder) */}
+                <div className="flex flex-col h-full">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-sm font-semibold text-slate-800">Urutan Penggabungan ({files.length})</h4>
+                  </div>
+                  
+                  <div className="flex-1 bg-white border border-slate-200 rounded-md p-3 shadow-sm overflow-y-auto max-h-[320px]">
+                    {files.length === 0 ? (
+                      <div className="flex items-center justify-center h-full text-sm text-slate-400 min-h-[200px]">
+                        Belum ada file yang ditambahkan.
                       </div>
-                      <div className="flex items-center justify-center w-10 h-10 rounded bg-teal-50 text-teal-600">
-                        <FileText size={20} />
+                    ) : (
+                      <div className="space-y-2">
+                        {files.map((item, index) => (
+                          <div
+                            key={item.id}
+                            draggable
+                            onDragStart={(e) => onDragStart(e, index)}
+                            onDragOver={(e) => onDragOver(e)}
+                            onDrop={(e) => onDrop(e, index)}
+                            className={cn(
+                              "flex items-center gap-3 p-3 bg-white border border-slate-200 rounded shadow-sm group",
+                              draggedIdx === index ? "opacity-50" : ""
+                            )}
+                          >
+                            <div className="text-slate-300 cursor-grab active:cursor-grabbing hover:text-slate-500 p-1">
+                              <GripVertical size={20} />
+                            </div>
+                            <div className="flex items-center justify-center w-10 h-10 rounded bg-teal-50 text-teal-600 shrink-0">
+                              <FileText size={20} />
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                              <p className="text-sm font-semibold text-slate-800 truncate" title={item.file.name}>
+                                {item.file.name}
+                              </p>
+                              <p className="text-xs text-slate-500 mt-0.5">
+                                {formatBytes(item.file.size)}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => removeFile(item.id)}
+                              className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded transition-colors shrink-0"
+                              title="Hapus dari daftar"
+                            >
+                              <X size={18} />
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                      <div className="flex-1 overflow-hidden">
-                        <p className="text-sm font-semibold text-slate-800 truncate" title={item.file.name}>
-                          {item.file.name}
-                        </p>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {formatBytes(item.file.size)}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => removeFile(item.id)}
-                        className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded transition-colors"
-                        title="Hapus dari daftar"
-                      >
-                        <X size={18} />
-                      </button>
-                    </div>
-                  ))}
+                    )}
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Bottom Actions */}
