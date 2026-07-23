@@ -1,0 +1,8 @@
+{
+  "track_id": "004-fitur-merge-pdf",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-22T17:09:00Z",
+  "updated_at": "2026-07-22T17:09:00Z",
+  "description": "Fitur menggabungkan beberapa file PDF menjadi satu via antarmuka Desktop menggunakan QPDF."
+}
