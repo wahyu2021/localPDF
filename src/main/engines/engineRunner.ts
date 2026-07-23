@@ -4,6 +4,7 @@ import { getBinaryPath } from '../utils/binaryPath';
 
 export interface RunEngineOptions extends ExecaOptions {
   timeoutMs?: number;
+  onOutput?: (data: string) => void;
 }
 
 /**
@@ -25,10 +26,17 @@ export async function runEngine(
   log.info(`[Engine] Memulai eksekusi ${binaryName} dengan argumen:`, args.join(' '));
 
   try {
-    const { stdout, stderr } = await execa(exePath, args, {
+    const child = execa(exePath, args, {
       timeout: timeoutMs,
       ...options
     });
+
+    if (options.onOutput) {
+      child.stdout?.on('data', (data) => options.onOutput!(data.toString()));
+      child.stderr?.on('data', (data) => options.onOutput!(data.toString()));
+    }
+
+    const { stdout, stderr } = await child;
     
     // Walaupun sukses, beberapa engine (seperti Ghostscript) mungkin membuang output ke stderr
     if (stderr) {

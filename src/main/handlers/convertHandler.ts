@@ -66,6 +66,18 @@ export async function handleConvertPdf(
 
       } else if (mode === 'pdf-to-image') {
         log.info(`[ConvertHandler] PDF -> Image: ${file} (Format: ${outputFormat})`);
+        
+        // Cari tau jumlah halaman untuk progress yang lebih smooth
+        let totalPages = 1;
+        try {
+          const pdfBytes = await fs.readFile(file);
+          const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+          totalPages = pdfDoc.getPageCount();
+          log.info(`[ConvertHandler] Total halaman PDF: ${totalPages}`);
+        } catch (e) {
+          log.warn(`[ConvertHandler] Gagal menghitung halaman, fallback ke progress dasar.`, e);
+        }
+
         const isPng = outputFormat === 'png';
         const ext = isPng ? 'png' : 'jpg';
         const device = isPng ? 'png16m' : 'jpeg';
@@ -88,7 +100,22 @@ export async function handleConvertPdf(
           gsArgs.splice(5, 0, '-dJPEGQ=90');
         }
 
-        await runEngine('gs/bin/gswin64c.exe', gsArgs);
+        // Kalkulasi proporsi progress untuk file ini
+        const baseProgress = 10 + Math.floor((i / filePaths.length) * 80);
+        const maxFileProgress = Math.floor((1 / filePaths.length) * 80);
+
+        await runEngine('gs/bin/gswin64c.exe', gsArgs, {
+          onOutput: (data) => {
+            const match = data.match(/Page\s+(\d+)/);
+            if (match && match[1]) {
+              const currentPage = parseInt(match[1], 10);
+              const filePercent = Math.min(currentPage / totalPages, 1);
+              const currentProgress = baseProgress + Math.floor(filePercent * maxFileProgress);
+              // Update UI tiap halaman selesai dirender
+              sendProgress(window, taskId, currentProgress);
+            }
+          }
+        });
         // Ghostscript bisa menghasilkan banyak file, kita hanya menghitung file inputnya saja sebagai +1 operasi sukses
         filesGenerated++;
 
