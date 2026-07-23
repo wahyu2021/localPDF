@@ -4,6 +4,7 @@ import { CompressPage } from './pages/CompressPage';
 import { MergePage } from './pages/MergePage';
 import { SplitPage } from './pages/SplitPage';
 import { ConvertPage } from './pages/ConvertPage';
+import { SecurityPage } from './pages/SecurityPage';
 import { FileDown, Layers, SplitSquareHorizontal, FileArchive, Lock, Unlock } from 'lucide-react';
 import { cn } from './utils/cn';
 import logo from './assets/logo.png';
@@ -13,8 +14,7 @@ const TOOLS = [
   { id: 'Merge', name: 'Gabungkan PDF', icon: Layers },
   { id: 'Split', name: 'Pisahkan PDF', icon: SplitSquareHorizontal },
   { id: 'Convert', name: 'Konversi PDF', icon: FileArchive },
-  { id: 'Protect', name: 'Kunci PDF', icon: Lock },
-  { id: 'Unlock', name: 'Buka Kunci PDF', icon: Unlock },
+  { id: 'Security', name: 'Keamanan PDF', icon: Lock },
 ];
 
 export default function App() {
@@ -30,6 +30,8 @@ export default function App() {
         return <SplitPage />;
       case 'Convert':
         return <ConvertPage />;
+      case 'Security':
+        return <SecurityPage />;
       default:
         return (
           <div className="flex items-center justify-center h-full text-sm font-medium text-slate-500">
