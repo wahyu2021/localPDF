@@ -46,6 +46,7 @@ LocalPDF adalah aplikasi desktop gratis dan open-source yang menyediakan semua f
 | Fitur | Deskripsi | Engine |
 |---|---|---|
 | **Convert Office → PDF** | Word, Excel, PowerPoint ke PDF | LibreOffice headless |
+| **PDF → Word** | Konversi PDF menjadi dokumen .docx yang dapat diedit | LibreOffice headless |
 | **Protect PDF** | Tambah password enkripsi 256-bit | QPDF |
 | **Unlock PDF** | Hapus password (jika password diketahui) | QPDF |
 
