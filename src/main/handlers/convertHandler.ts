@@ -47,14 +47,14 @@ export async function handleConvertPdf(
         // Pengecekan apakah LibreOffice Portable sudah diekstrak oleh user
         const isProd = require('electron').app.isPackaged;
         const rootDir = isProd ? process.resourcesPath : path.join(__dirname, '../../');
-        const libreOfficePath = path.join(rootDir, 'binaries', 'win', 'LibreOffice', 'program', 'soffice.exe');
+        const libreOfficePath = path.join(rootDir, 'binaries', 'win', 'LibreOfficePortable', 'App', 'libreoffice', 'program', 'soffice.exe');
         
         if (!require('fs').existsSync(libreOfficePath)) {
-          throw new Error('LibreOffice Portable belum ditemukan. Silakan unduh LibreOffice Portable dan ekstrak ke folder "binaries/win/LibreOffice".');
+          throw new Error('LibreOffice Portable belum ditemukan. Silakan unduh LibreOffice Portable dan ekstrak ke folder "binaries/win/LibreOfficePortable".');
         }
 
         // soffice --headless --convert-to pdf --outdir <dir> <file>
-        await runEngine('LibreOffice/program/soffice.exe', [
+        await runEngine('LibreOfficePortable/App/libreoffice/program/soffice.exe', [
           '--headless',
           '--convert-to',
           'pdf',
