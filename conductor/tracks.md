@@ -44,5 +44,5 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ---
 
-- [ ] **Track: Refactor UI Components (PDFToWord & Lainnya)**
+- [x] **Track: Refactor UI Components (PDFToWord & Lainnya)**
 *Link: [./tracks/refactor-page-pdftoword_20260724/](./tracks/refactor-page-pdftoword_20260724/)*
