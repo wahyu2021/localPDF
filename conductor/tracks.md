@@ -31,3 +31,8 @@ File ini digunakan untuk melacak seluruh track implementasi pada proyek LocalPDF
 
 ## [ ] Track: Fitur Security PDF (Protect & Unlock)
 - **Tautan:** [007-fitur-security-pdf](tracks/007-fitur-security-pdf/index.md)
+
+---
+
+- [~] **Track: 008-chore-refactor-pages**
+*Link: [./tracks/008-chore-refactor-pages_20260723/](./tracks/008-chore-refactor-pages_20260723/)*
